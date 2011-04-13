@@ -1,0 +1,112 @@
+<?php
+
+/*
+ * This file is part of the Badwords PHP package.
+ *
+ * (c) Stephen Melrose <me@stephenmelrose.co.uk>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Badword\Cache;
+
+use Badword\Cache;
+
+/**
+ * AbstractCache is the base cache class for each cache mechanism.
+ *
+ * @author Stephen Melrose <me@stephenmelrose.co.uk>
+ */
+abstract class AbstractCache implements Cache
+{
+    /**
+     * @var integer
+     */
+    protected $defaultLifetime;
+    
+    /**
+     * @var string
+     */
+    protected $prefix;
+
+    /**
+     * Constructs a new cache.
+     *
+     * @param string $prefix The text to prefix to each cache entry.
+     * @param integer $defaultLifetime The default amount of time the data should be stored.
+     */
+    public function __construct($prefix = 'badword_', $defaultLifetime = null)
+    {
+        $this->setPrefix($prefix);
+        $this->setDefaultLifetime($defaultLifetime);
+    }
+
+    /**
+     * Gets the default cache lifetime.
+     *
+     * @return integer
+     */
+    public function getDefaultLifetime()
+    {
+        return $this->defaultLifetime;
+    }
+
+    /**
+     * Sets the default cache lifetime.
+     *
+     * @param integer $defaultLifetime
+     *
+     * @return AbstractCache
+     */
+    public function setDefaultLifetime($defaultLifetime = null)
+    {
+        if(!$this->validateLifetime($defaultLifetime))
+        {
+            throw new \InvalidArgumentException('Invalid default lifetime. Please provide an integer greater than 0.');
+        }
+        
+        $this->defaultLifetime = $defaultLifetime;
+        return $this;
+    }
+    
+    /**
+     * Validates a lifetime value.
+     *
+     * @param integer $lifetime
+     *
+     * @return boolean
+     */
+    protected function validateLifetime($lifetime)
+    {
+        return $lifetime === null || (ctype_digit($lifetime) && $lifetime > 0);
+    }
+
+    /**
+     * Gets the cache prefix.
+     *
+     * @return string
+     */
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
+    /**
+     * Sets the cache prefix.
+     *
+     * @param string $prefix
+     *
+     * @return AbstractCache
+     */
+    public function setPrefix($prefix)
+    {
+        if(!(is_string($prefix) && strlen(trim($prefix)) > 0))
+        {
+            throw new \InvalidArgumentException('Invalid prefix. Please provide a non-empty string.');
+        }
+
+        $this->prefix = $prefix;
+        return $this;
+    }
+}

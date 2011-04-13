@@ -12,7 +12,7 @@
 namespace Badword;
 
 /**
- * Cache reads and stores data from cache source.
+ * Cache reads and stores data from a cache source.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
