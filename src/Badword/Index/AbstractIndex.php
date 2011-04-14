@@ -86,16 +86,18 @@ abstract class AbstractIndex implements Index
      */
     protected function loadWords()
     {
+        $fromCache = true;
         $words = $this->loadWordsFromCache();
         if (!$words)
         {
+            $fromCache = false;
             $words = $this->loadWordsFromSource();
-            $this->saveWordsToCache($words);
         }
 
-        if (!(is_array($words) && count($words) > 0))
-        {
-            throw new \RuntimeException('Words could not be loaded.');
+        if (!(is_array($words) && count($words) > 0)) {
+            throw new \RuntimeException('Words could not be loaded. Load failed or source was empty.');
+        } else if (!$fromCache) {
+            $this->saveWordsToCache($words);
         }
 
         $wordObjects = array();

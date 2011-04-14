@@ -93,7 +93,9 @@ class Csv extends AbstractIndex
         $handle = fopen($this->getPath(), 'r');
         if ($handle === false)
         {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException('CSV file not could be opened.');
+            // @codeCoverageIgnoreEnd
         }
 
         $row = 0;
@@ -115,12 +117,7 @@ class Csv extends AbstractIndex
             array_push($words, $data);
         }
 
-        if (count($words) == 0)
-        {
-            throw new \RuntimeException('No words were found in the CSV file.');
-        }
-
-        return $words;
+        return $words ?: null;
     }
     
     /**

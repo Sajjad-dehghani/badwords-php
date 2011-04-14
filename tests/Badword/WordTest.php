@@ -48,6 +48,8 @@ class WordTest extends \PHPUnit_Framework_TestCase
             array(true, true),
             array(true, false),
             array(true, null),
+            array(true, 0),
+            array(true, 1),
             array(true, ''),
             array(true, '    '),
             array(false, 'foobar')
@@ -59,7 +61,7 @@ class WordTest extends \PHPUnit_Framework_TestCase
      */
     public function testSettingWord($expectError, $data)
     {
-        $this->setExpectedException($expectError ? 'InvalidArgumentException' : null);
+        $this->setExpectedException($expectError ? '\InvalidArgumentException' : null);
         $this->assertInstanceOf('\Badword\Word', $this->wordStub->setWord($data));
         $this->assertEquals($data, $this->wordStub->getWord());
     }
@@ -69,6 +71,8 @@ class WordTest extends \PHPUnit_Framework_TestCase
         return array(
             array(true, array('foo')),
             array(true, null),
+            array(true, 0),
+            array(true, 1),
             array(true, ''),
             array(true, '    '),
             array(true, 'foobar'),
@@ -82,7 +86,7 @@ class WordTest extends \PHPUnit_Framework_TestCase
      */
     public function testSettingMustStartWord($expectError, $data)
     {
-        $this->setExpectedException($expectError ? 'InvalidArgumentException' : null);
+        $this->setExpectedException($expectError ? '\InvalidArgumentException' : null);
         $this->assertInstanceOf('\Badword\Word', $this->wordStub->setMustStartWord($data));
         $this->assertEquals($data, $this->wordStub->getMustStartWord());
     }
@@ -92,6 +96,8 @@ class WordTest extends \PHPUnit_Framework_TestCase
         return array(
             array(true, array('foo')),
             array(true, null),
+            array(true, 0),
+            array(true, 1),
             array(true, ''),
             array(true, '    '),
             array(true, 'foobar'),
@@ -105,7 +111,7 @@ class WordTest extends \PHPUnit_Framework_TestCase
      */
     public function testSettingMustEndWord($expectError, $data)
     {
-        $this->setExpectedException($expectError ? 'InvalidArgumentException' : null);
+        $this->setExpectedException($expectError ? '\InvalidArgumentException' : null);
         $this->assertInstanceOf('\Badword\Word', $this->wordStub->setMustEndWord($data));
         $this->assertEquals($data, $this->wordStub->getMustEndWord());
     }
