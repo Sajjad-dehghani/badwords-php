@@ -11,6 +11,8 @@
 
 namespace Badword\Index;
 
+use Badword\Cache;
+
 /**
  * Csv loads and formats a list of bad words from a CSV file.
  *
@@ -69,7 +71,7 @@ class Csv extends AbstractIndex
             throw new \InvalidArgumentException('Invalid path. The specified path is either invalid, can not be found, or can not be read.');
         }
 
-        $this->path = $path;
+        $this->path = realpath($path);
         return $this;
     }
 
@@ -86,7 +88,7 @@ class Csv extends AbstractIndex
      *
      * @return array
      */
-    protected function loadWordsDataFromSource()
+    protected function loadWordsFromSource()
     {
         $handle = fopen($this->getPath(), 'r');
         if ($handle === false)
@@ -103,7 +105,7 @@ class Csv extends AbstractIndex
 
             try
             {
-                $this->validateData($data);
+                $this->validateRowData($data);
             }
             catch(\RuntimeException $e)
             {
@@ -130,30 +132,25 @@ class Csv extends AbstractIndex
      *
      * @throws \RuntimeException When an error is detected in the data.
      */
-    protected function validateData(array $data)
+    protected function validateRowData(array $data)
     {
-        if (count($data) < 3)
-        {
-            throw new \RuntimeException('Row column count must be 3.');
-        }
-
         $data = array_values($data);
 
-        if (!(is_string($data[0]) && mb_strlen(trim($data[0])) > 0))
+        if (!(isset($data[0]) && is_string($data[0]) && mb_strlen(trim($data[0])) > 0))
         {
             throw new \RuntimeException('Column 1 must be a valid word.');
         }
 
         $allowedBooleanValues = array(true, false, 1, 0, '1', '0');
 
-        if (!in_array($data[1], $allowedBooleanValues, true))
+        if (isset($data[1]) && !in_array($data[1], $allowedBooleanValues, true))
         {
-            throw new \RuntimeException('Column 2 must be a valid boolean, e.g. either 1 or 0.');
+            throw new \RuntimeException('Column 2 must be a valid boolean, e.g. either 1 or 0, or omitted.');
         }
 
-        if (!in_array($data[2], $allowedBooleanValues, true))
+        if (isset($data[2]) && !in_array($data[2], $allowedBooleanValues, true))
         {
-            throw new \RuntimeException('Column 3 must be a valid boolean, e.g. either 1 or 0.');
+            throw new \RuntimeException('Column 3 must be a valid boolean, e.g. either 1 or 0, or omitted.');
         }
 
         return true;

@@ -13,7 +13,6 @@ namespace Badword\Index;
 
 use Badword\Cache;
 use Badword\Cache\None;
-
 use Badword\Index;
 use Badword\Word;
 
@@ -68,18 +67,6 @@ abstract class AbstractIndex implements Index
     }
 
     /**
-     * Converts an array of word data in a new Word object.
-     *
-     * @param array $data
-     *
-     * @return Word
-     */
-    protected function convertArrayToWord(array $data)
-    {
-        return new Word((string) $data[0], (bool) $data[1], (bool) $data[2]);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getWords()
@@ -99,10 +86,11 @@ abstract class AbstractIndex implements Index
      */
     protected function loadWords()
     {
-        $words = $this->loadWordsDataFromCache();
+        $words = $this->loadWordsFromCache();
         if (!$words)
         {
-            $words = $this->loadWordsDataFromSource();
+            $words = $this->loadWordsFromSource();
+            $this->saveWordsToCache($words);
         }
 
         if (!(is_array($words) && count($words) > 0))
@@ -111,10 +99,9 @@ abstract class AbstractIndex implements Index
         }
 
         $wordObjects = array();
-
         foreach($words as $word)
         {
-            array_push($wordObjects, $this->convertArrayToWord($word));
+            array_push($wordObjects, $this->convertWordToObject($word));
         }
 
         return $wordObjects;
@@ -125,9 +112,9 @@ abstract class AbstractIndex implements Index
      *
      * @return array
      */
-    protected function loadWordsDataFromCache()
+    protected function loadWordsFromCache()
     {
-        return $this->getCache()->get($this->getId().'_words');
+        return $this->getCache()->get($this->getCacheKey());
     }
 
     /**
@@ -135,5 +122,43 @@ abstract class AbstractIndex implements Index
      *
      * @return array
      */
-    abstract protected function loadWordsDataFromSource();
+    abstract protected function loadWordsFromSource();
+
+    /**
+     * Saves the list of words to the cache.
+     *
+     * @param array $words
+     *
+     * @return boolean
+     */
+    protected function saveWordsToCache(array $words)
+    {
+        return $this->getCache()->set($this->getCacheKey(), $words);
+    }
+
+    /**
+     * Gets the key used to read/store the words from the cache.
+     *
+     * @return string
+     */
+    protected function getCacheKey()
+    {
+        return $this->getId().'_words';
+    }
+
+    /**
+     * Converts an array of word data in a new Word object.
+     *
+     * @param array $data
+     *
+     * @return Word
+     */
+    protected function convertWordToObject(array $data)
+    {
+        return new Word(
+            (string) $data[0],
+            (isset($data[1]) ? (bool) $data[1] : false),
+            (isset($data[2]) ? (bool) $data[2] : false)
+        );
+    }
 }
