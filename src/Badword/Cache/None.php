@@ -11,14 +11,12 @@
 
 namespace Badword\Cache;
 
-use Badword\Cache;
-
 /**
  * Cache class that mimics cache interaction, but does nothing.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
-class None implements Cache
+class None extends AbstractCache
 {
     /**
      * {@inheritdoc}

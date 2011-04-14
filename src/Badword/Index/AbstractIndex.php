@@ -116,7 +116,7 @@ abstract class AbstractIndex implements Index
      */
     protected function loadWordsFromCache()
     {
-        return $this->getCache()->get($this->getCacheKey());
+        return $this->getCache()->has($this->getCacheKey()) ? $this->getCache()->get($this->getCacheKey()) : null;
     }
 
     /**

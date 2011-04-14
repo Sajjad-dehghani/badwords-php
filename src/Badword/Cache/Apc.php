@@ -27,7 +27,9 @@ class Apc extends AbstractCache
     {
         if(!function_exists('apc_store') || !ini_get('apc.enabled'))
         {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException('You must have APC installed and enabled to use the Apc cache class.');
+            // @codeCoverageIgnoreEnd
         }
 
         parent::__construct($prefix, $defaultLifetime);
@@ -49,12 +51,16 @@ class Apc extends AbstractCache
     {
         if(function_exists('apc_exists'))
         {
+            // @codeCoverageIgnoreStart
             return apc_exists($key);
+            // @codeCoverageIgnoreEnd
         }
         else
         {
+            // @codeCoverageIgnoreStart
             $this->fetch($key, $has);
             return $has;
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -77,7 +83,9 @@ class Apc extends AbstractCache
         }
         else
         {
+            // @codeCoverageIgnoreStart
             $success = $value !== false;
+            // @codeCoverageIgnoreEnd
         }
 
         return $value;

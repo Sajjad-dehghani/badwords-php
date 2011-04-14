@@ -79,7 +79,7 @@ abstract class AbstractCache implements Cache
      */
     protected function validateLifetime($lifetime)
     {
-        return $lifetime === null || (ctype_digit($lifetime) && $lifetime > 0);
+        return $lifetime === null || ((is_int($lifetime) || ctype_digit($lifetime)) && $lifetime > 0);
     }
 
     /**
