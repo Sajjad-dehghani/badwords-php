@@ -14,7 +14,7 @@ namespace Badword\Cache;
 use Badword\Cache;
 
 /**
- * AbstractCache is the base cache class for each cache mechanism.
+ * AbstractCache is the base cache class for all Cache classes.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
@@ -101,7 +101,7 @@ abstract class AbstractCache implements Cache
      */
     public function setPrefix($prefix)
     {
-        if(!(is_string($prefix) && strlen(trim($prefix)) > 0))
+        if(!(is_string($prefix) && mb_strlen(trim($prefix)) > 0))
         {
             throw new \InvalidArgumentException('Invalid prefix. Please provide a non-empty string.');
         }

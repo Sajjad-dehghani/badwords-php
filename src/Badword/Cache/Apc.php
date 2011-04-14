@@ -85,6 +85,8 @@ class Apc extends AbstractCache
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \InvalidArgumentException When the lifetime is invalid.
      */
     public function set($key, $data, $lifetime = null)
     {

@@ -12,7 +12,7 @@
 namespace Badword;
 
 /**
- * Word represents a single "bad" word and its settings.
+ * Word is a single bad word and its settings.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
@@ -36,9 +36,9 @@ class Word
     /**
      * Constructs a new Word.
      * 
-     * @param string $word The "bad" word.
-     * @param boolean $mustStartWord Whether the "bad" word must start a word.
-     * @param boolean $mustEndWord Whether the "bad" word must end a word.
+     * @param string $word The bad word.
+     * @param boolean $mustStartWord Whether the bad word must start a word.
+     * @param boolean $mustEndWord Whether the bad word must end a word.
      */
     public function __construct($word, $mustStartWord = false, $mustEndWord = false)
     {
@@ -48,7 +48,7 @@ class Word
     }
 
     /**
-     * Gets whether the "bad" word must end a word.
+     * Gets whether the bad word must end a word.
      * 
      * @return boolean
      */
@@ -58,7 +58,7 @@ class Word
     }
 
     /**
-     * Sets whether the "bad" word must end a word.
+     * Sets whether the bad word must end a word.
      *
      * @param boolean $mustEndWord
      *
@@ -76,7 +76,7 @@ class Word
     }
 
     /**
-     * Gets whether the "bad" word must start a word.
+     * Gets whether the bad word must start a word.
      *
      * @return boolean
      */
@@ -86,7 +86,7 @@ class Word
     }
 
     /**
-     * Sets whether the "bad" word must start a word.
+     * Sets whether the bad word must start a word.
      *
      * @param boolean $mustEndWord
      *
@@ -104,7 +104,7 @@ class Word
     }
 
     /**
-     * Gets the "bad" word.
+     * Gets the bad word.
      *
      * @return string
      */
@@ -114,7 +114,7 @@ class Word
     }
 
     /**
-     * Sets the "bad" word.
+     * Sets the bad word.
      *
      * @param string $word
      *
@@ -122,12 +122,12 @@ class Word
      */
     public function setWord($word)
     {
-        if(!(is_string($word) && strlen(trim($word)) > 0))
+        if(!(is_string($word) && mb_strlen(trim($word)) > 0))
         {
             throw new \InvalidArgumentException('Invalid word. Please provide a non-empty string.');
         }
 
-        $this->word = trim($word);
+        $this->word = mb_strtolower(trim($word));
         return $this;
     }
 }
