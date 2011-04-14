@@ -68,13 +68,6 @@ abstract class AbstractIndex implements Index
     }
 
     /**
-     * Gets the unique ID for the Index.
-     *
-     * @return string
-     */
-    abstract public function getId();
-
-    /**
      * Converts an array of word data in a new Word object.
      *
      * @param array $data

@@ -19,6 +19,13 @@ namespace Badword;
 interface Index
 {
     /**
+     * Gets the unique ID for the Index.
+     *
+     * @return string
+     */
+    public function getId();
+    
+    /**
      * Gets the Words.
      *
      * @return array Array of Word objects.
