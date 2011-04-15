@@ -27,7 +27,7 @@ class AbstractFileTest extends \PHPUnit_Framework_TestCase
     {
         $this->indexStub = $this->getMock(
             '\Badword\Index\AbstractFile',
-            array('getFileType', 'loadWordsFromSource'),
+            array('getFileType', 'loadWordsDataFromSource'),
             array($this->getFixtureDir().'/words.csv')
         );
 

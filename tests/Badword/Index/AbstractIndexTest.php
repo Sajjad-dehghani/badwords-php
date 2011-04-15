@@ -13,7 +13,7 @@ namespace Badword\Index;
 
 class AbstractIndexTest extends \PHPUnit_Framework_TestCase
 {
-    protected static $wordsStub = array(
+    protected static $wordsData = array(
         array('foo', 0, 0),
         array('bar', 0, 1),
         array('moo', 1, 0),
@@ -29,15 +29,15 @@ class AbstractIndexTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->indexStub = $this->getMock('\Badword\Index\AbstractIndex', array('loadWordsFromSource', 'getId'));
+        $this->indexStub = $this->getMock('\Badword\Index\AbstractIndex', array('loadWordsDataFromSource', 'getId'));
 
         $this->indexStub->expects($this->any())
                         ->method('getId')
                         ->will($this->returnValue('mock_index'));
 
         $this->indexStub->expects($this->any())
-                        ->method('loadWordsFromSource')
-                        ->will($this->returnValue(static::$wordsStub));
+                        ->method('loadWordsDataFromSource')
+                        ->will($this->returnValue(static::$wordsData));
     }
     
     public function testGetCache()
@@ -46,18 +46,68 @@ class AbstractIndexTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Badword\Cache\None', $this->indexStub->getCache());
     }
 
+    public function dataProviderSettingMustEndWordDefault()
+    {
+        return array(
+            array(true, array('foo')),
+            array(true, null),
+            array(true, 0),
+            array(true, 1),
+            array(true, ''),
+            array(true, '    '),
+            array(true, 'foobar'),
+            array(false, true),
+            array(false, false),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderSettingMustEndWordDefault
+     */
+    public function testSettingMustEndWordDefault($expectError, $data)
+    {
+        $this->setExpectedException($expectError ? '\InvalidArgumentException' : null);
+        $this->assertInstanceOf('\Badword\Index\AbstractIndex', $this->indexStub->setMustEndWordDefault($data));
+        $this->assertEquals($data, $this->indexStub->getMustEndWordDefault());
+    }
+
+    public function dataProviderSettingMustStartWordDefault()
+    {
+        return array(
+            array(true, array('foo')),
+            array(true, null),
+            array(true, 0),
+            array(true, 1),
+            array(true, ''),
+            array(true, '    '),
+            array(true, 'foobar'),
+            array(false, true),
+            array(false, false),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderSettingMustStartWordDefault
+     */
+    public function testSettingMustStartWordDefault($expectError, $data)
+    {
+        $this->setExpectedException($expectError ? '\InvalidArgumentException' : null);
+        $this->assertInstanceOf('\Badword\Index\AbstractIndex', $this->indexStub->setMustStartWordDefault($data));
+        $this->assertEquals($data, $this->indexStub->getMustStartWordDefault());
+    }
+
     public function testGetWords()
     {
         $words = $this->indexStub->getWords();
         $this->assertInternalType('array', $words);
-        $this->assertEquals(count(static::$wordsStub), count($words));
+        $this->assertEquals(count(static::$wordsData), count($words));
 
         foreach($words as $key => $word)
         {
             $this->assertInstanceOf('\Badword\Word', $word);
-            $this->assertEquals(static::$wordsStub[$key][0], $word->getWord());
-            $this->assertEquals(isset(static::$wordsStub[$key][1]) && static::$wordsStub[$key][1] ? true : false, $word->getMustStartWord());
-            $this->assertEquals(isset(static::$wordsStub[$key][2]) && static::$wordsStub[$key][2] ? true : false, $word->getMustEndWord());
+            $this->assertEquals(static::$wordsData[$key][0], $word->getWord());
+            $this->assertEquals(isset(static::$wordsData[$key][1]) && static::$wordsData[$key][1] ? true : false, $word->getMustStartWord());
+            $this->assertEquals(isset(static::$wordsData[$key][2]) && static::$wordsData[$key][2] ? true : false, $word->getMustEndWord());
         }
     }
 }

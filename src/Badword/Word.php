@@ -68,7 +68,7 @@ class Word
     {
         if(!(is_bool($mustEndWord)))
         {
-            throw new \InvalidArgumentException('Invalid must end word. Please provide a boolean.');
+            throw new \InvalidArgumentException('Invalid "must end word". Please provide a boolean.');
         }
 
         $this->mustEndWord = $mustEndWord;
@@ -96,7 +96,7 @@ class Word
     {
         if(!(is_bool($mustStartWord)))
         {
-            throw new \InvalidArgumentException('Invalid must start word. Please provide a boolean.');
+            throw new \InvalidArgumentException('Invalid "must start word". Please provide a boolean.');
         }
 
         $this->mustStartWord = $mustStartWord;

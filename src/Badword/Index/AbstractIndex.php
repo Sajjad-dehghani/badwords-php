@@ -29,6 +29,16 @@ abstract class AbstractIndex implements Index
     protected $cache;
 
     /**
+     * @var boolean
+     */
+    protected $mustEndWordDefault = false;
+
+    /**
+     * @var boolean
+     */
+    protected $mustStartWordDefault = false;
+
+    /**
      * @var array
      */
     protected $words;
@@ -67,6 +77,62 @@ abstract class AbstractIndex implements Index
     }
 
     /**
+     * Gets the "must end word" default.
+     *
+     * @return boolean
+     */
+    public function getMustEndWordDefault()
+    {
+        return $this->mustEndWordDefault;
+    }
+
+    /**
+     * Sets the "must end word" default.
+     *
+     * @param boolean $mustEndWordDefault
+     *
+     * @return AbstractIndex
+     */
+    public function setMustEndWordDefault($mustEndWordDefault = false)
+    {
+        if (!is_bool($mustEndWordDefault))
+        {
+            throw new \InvalidArgumentException('Invalid "must end word" default. Must be a boolean.');
+        }
+
+        $this->mustEndWordDefault = $mustEndWordDefault;
+        return $this;
+    }
+
+    /**
+     * Gets the "must start word" default.
+     *
+     * @return boolean
+     */
+    public function getMustStartWordDefault()
+    {
+        return $this->mustStartWordDefault;
+    }
+
+    /**
+     * Sets the "must start word" default.
+     *
+     * @param boolean $mustStartWordDefault
+     *
+     * @return AbstractIndex
+     */
+    public function setMustStartWordDefault($mustStartWordDefault = false)
+    {
+        if (!is_bool($mustStartWordDefault))
+        {
+            throw new \InvalidArgumentException('Invalid "must start word" default. Must be a boolean.');
+        }
+
+        $this->mustStartWordDefault = $mustStartWordDefault;
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getWords()
@@ -87,80 +153,86 @@ abstract class AbstractIndex implements Index
     protected function loadWords()
     {
         $fromCache = true;
-        $words = $this->loadWordsFromCache();
-        if (!$words)
+        $wordsData = $this->loadWordsDataFromCache();
+        if (!$wordsData)
         {
             $fromCache = false;
-            $words = $this->loadWordsFromSource();
+            $wordsData = $this->loadWordsDataFromSource();
         }
 
-        if (!(is_array($words) && count($words) > 0)) {
-            throw new \RuntimeException('Words could not be loaded. Load failed or source was empty.');
-        } else if (!$fromCache) {
-            $this->saveWordsToCache($words);
-        }
-
-        $wordObjects = array();
-        foreach($words as $word)
+        if (!(is_array($wordsData) && count($wordsData) > 0))
         {
-            array_push($wordObjects, $this->convertWordToObject($word));
+            throw new \RuntimeException('Words could not be loaded. Load failed or source was empty.');
         }
 
-        return $wordObjects;
+        if (!$fromCache)
+        {
+            $this->saveWordsDataToCache($wordsData);
+        }
+
+        $words = array();
+        foreach($wordsData as $wordData)
+        {
+            array_push($words, $this->convertWordDataToObject($wordData));
+        }
+
+        return $words;
     }
 
     /**
-     * Loads the list of words from the cache.
+     * Loads the words data from the cache.
      *
      * @return array
      */
-    protected function loadWordsFromCache()
+    protected function loadWordsDataFromCache()
     {
-        return $this->getCache()->has($this->getCacheKey()) ? $this->getCache()->get($this->getCacheKey()) : null;
+        $cache = $this->getCache();
+        $cacheKey = $this->getCacheKey();
+        return $cache->has($cacheKey) ? $cache->get($cacheKey) : null;
     }
 
     /**
-     * Loads the list of words from the source.
+     * Loads the words data from the source.
      *
      * @return array
      */
-    abstract protected function loadWordsFromSource();
+    abstract protected function loadWordsDataFromSource();
 
     /**
-     * Saves the list of words to the cache.
+     * Saves the words data to the cache.
      *
-     * @param array $words
+     * @param array $wordsData
      *
      * @return boolean
      */
-    protected function saveWordsToCache(array $words)
+    protected function saveWordsDataToCache(array $wordsData)
     {
-        return $this->getCache()->set($this->getCacheKey(), $words);
+        return $this->getCache()->set($this->getCacheKey(), $wordsData);
     }
 
     /**
-     * Gets the key used to read/store the words from the cache.
+     * Gets the key used to read/store the words data from the cache.
      *
      * @return string
      */
     protected function getCacheKey()
     {
-        return $this->getId().'_words';
+        return $this->getId().'_words_data';
     }
 
     /**
-     * Converts an array of word data in a new Word object.
+     * Converts a valid array of word data in a new Word object.
      *
-     * @param array $data
+     * @param array $wordData
      *
      * @return Word
      */
-    protected function convertWordToObject(array $data)
+    protected function convertWordDataToObject(array $wordData)
     {
         return new Word(
-            (string) $data[0],
-            (isset($data[1]) ? (bool) $data[1] : false),
-            (isset($data[2]) ? (bool) $data[2] : false)
+            (string) $wordData[0],
+            (isset($wordData[1]) ? (bool) $wordData[1] : $this->getMustStartWordDefault()),
+            (isset($wordData[2]) ? (bool) $wordData[2] : $this->getMustEndWordDefault())
         );
     }
 }
