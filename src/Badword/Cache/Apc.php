@@ -100,7 +100,7 @@ class Apc extends AbstractCache
     {
         if(!$this->validateLifetime($lifetime))
         {
-            throw new \InvalidArgumentException('Invalid lifetime. Please provide an integer greater than 0.');
+            throw new \InvalidArgumentException(sprintf('Invalid lifetime "%s". Expected integer greater than 0.', $lifetime));
         }
         else if($lifetime === null)
         {

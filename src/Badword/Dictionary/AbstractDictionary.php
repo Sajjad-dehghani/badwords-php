@@ -97,7 +97,7 @@ abstract class AbstractDictionary implements Dictionary
     {
         if (!is_bool($mustEndWordDefault))
         {
-            throw new \InvalidArgumentException('Invalid "must end word" default. Must be a boolean.');
+            throw new \InvalidArgumentException(sprintf('Invalid "must end word" default "%s". Expected boolean.', $mustEndWordDefault));
         }
 
         $this->mustEndWordDefault = $mustEndWordDefault;
@@ -125,7 +125,7 @@ abstract class AbstractDictionary implements Dictionary
     {
         if (!is_bool($mustStartWordDefault))
         {
-            throw new \InvalidArgumentException('Invalid "must start word" default. Must be a boolean.');
+            throw new \InvalidArgumentException(sprintf('Invalid "must start word" default "%s". Expected boolean.', $mustStartWordDefault));
         }
 
         $this->mustStartWordDefault = $mustStartWordDefault;

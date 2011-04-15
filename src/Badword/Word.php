@@ -68,7 +68,7 @@ class Word
     {
         if(!(is_bool($mustEndWord)))
         {
-            throw new \InvalidArgumentException('Invalid "must end word". Please provide a boolean.');
+            throw new \InvalidArgumentException(sprintf('Invalid must end word "%s". Expected boolean.', $mustEndWord));
         }
 
         $this->mustEndWord = $mustEndWord;
@@ -96,7 +96,7 @@ class Word
     {
         if(!(is_bool($mustStartWord)))
         {
-            throw new \InvalidArgumentException('Invalid "must start word". Please provide a boolean.');
+            throw new \InvalidArgumentException(sprintf('Invalid must start word "%s". Expected boolean.', $mustStartWord));
         }
 
         $this->mustStartWord = $mustStartWord;
@@ -124,7 +124,7 @@ class Word
     {
         if(!(is_string($word) && mb_strlen(trim($word)) > 0))
         {
-            throw new \InvalidArgumentException('Invalid word. Please provide a non-empty string.');
+            throw new \InvalidArgumentException(sprintf('Invalid word "%s". Expected non-empty string.', $word));
         }
 
         $this->word = mb_strtolower(trim($word));

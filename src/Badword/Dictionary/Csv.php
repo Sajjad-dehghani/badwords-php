@@ -37,7 +37,7 @@ class Csv extends AbstractFile
         if ($handle === false)
         {
             // @codeCoverageIgnoreStart
-            throw new \RuntimeException('CSV file not could be opened.');
+            throw new \RuntimeException('Error. CSV file not could be opened.');
             // @codeCoverageIgnoreEnd
         }
 
@@ -78,7 +78,7 @@ class Csv extends AbstractFile
 
         if (!(isset($wordData[0]) && is_string($wordData[0]) && mb_strlen(trim($wordData[0])) > 0))
         {
-            throw new \RuntimeException('Column 1 must be a valid word.');
+            throw new \RuntimeException(sprintf('Expected word in column 1 to be non-empty string.'));
         }
 
         $allowedBooleanValues = array(true, false, 1, 0, '1', '0');
@@ -87,7 +87,7 @@ class Csv extends AbstractFile
         {
             if (!in_array($wordData[1], $allowedBooleanValues, true))
             {
-                throw new \RuntimeException('Column 2 must be a valid boolean, e.g. either 1 or 0, or omitted.');
+                throw new \RuntimeException(sprintf('Expected must start word "%s" in column 2 to be either 1, 0, or to be omitted.', $wordData[1]));
             }
             else
             {
@@ -99,7 +99,7 @@ class Csv extends AbstractFile
         {
             if (!in_array($wordData[2], $allowedBooleanValues, true))
             {
-                throw new \RuntimeException('Column 3 must be a valid boolean, e.g. either 1 or 0, or omitted.');
+                throw new \RuntimeException(sprintf('Expected must end word "%s" in column 2 to be either 1, 0, or to be omitted.', $wordData[2]));
             }
             else
             {

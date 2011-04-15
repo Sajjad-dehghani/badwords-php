@@ -85,24 +85,24 @@ class Php extends AbstractFile
 
         if (!is_array($wordData))
         {
-            throw new \RuntimeException('Data must be an array or string.');
+            throw new \RuntimeException('Expected word data be an array or string.');
         }
 
         $wordData = array_values($wordData);
 
         if (!(isset($wordData[0]) && is_string($wordData[0]) && mb_strlen(trim($wordData[0])) > 0))
         {
-            throw new \RuntimeException('First value must be a valid word.');
+            throw new \RuntimeException('Expected first value "word" to be non-empty string.');
         }
 
         if (isset($wordData[1]) && !is_bool($wordData[1]))
         {
-            throw new \RuntimeException('Second value must be a boolean or omitted.');
+            throw new \RuntimeException('Expected second value "must start word" to be a boolean or omitted.');
         }
 
         if (isset($wordData[2]) && !is_bool($wordData[2]))
         {
-            throw new \RuntimeException('Third value must be a boolean or omitted.');
+            throw new \RuntimeException('Expected third value "must end word" to be a boolean or omitted.');
         }
 
         return $wordData;

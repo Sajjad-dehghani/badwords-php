@@ -63,10 +63,10 @@ abstract class AbstractCache implements Cache
     {
         if(!$this->validateLifetime($defaultLifetime))
         {
-            throw new \InvalidArgumentException('Invalid default lifetime. Please provide an integer greater than 0.');
+            throw new \InvalidArgumentException(sprintf('Invalid default lifetime "%s". Expected integer greater than 0 or null.', $defaultLifetime));
         }
         
-        $this->defaultLifetime = $defaultLifetime;
+        $this->defaultLifetime = $defaultLifetime !== null ? (int) $defaultLifetime : null;
         return $this;
     }
     
@@ -103,7 +103,7 @@ abstract class AbstractCache implements Cache
     {
         if(!(is_string($prefix) && mb_strlen(trim($prefix)) > 0))
         {
-            throw new \InvalidArgumentException('Invalid prefix. Please provide a non-empty string.');
+            throw new \InvalidArgumentException(sprintf('Invalid prefix "%s". Please provide a non-empty string.', $prefix));
         }
 
         $this->prefix = $prefix;
