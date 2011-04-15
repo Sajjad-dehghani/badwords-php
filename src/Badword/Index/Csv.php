@@ -11,8 +11,6 @@
 
 namespace Badword\Index;
 
-use Badword\Cache;
-
 /**
  * Csv loads and formats a list of bad words from a CSV file.
  *
@@ -52,7 +50,7 @@ class Csv extends AbstractFile
 
             try
             {
-                $this->validateWordData($rowData);
+                $rowData = $this->validateAndCleanWordData($rowData);
             }
             catch(\RuntimeException $e)
             {
@@ -66,7 +64,7 @@ class Csv extends AbstractFile
     }
     
     /**
-     * Validates word data from the CSV file.
+     * Validates and cleans the word data from the CSV file.
      * 
      * @param array $wordData
      * 
@@ -74,7 +72,7 @@ class Csv extends AbstractFile
      *
      * @throws \RuntimeException When an error is detected in the word data.
      */
-    protected function validateWordData(array $wordData)
+    protected function validateAndCleanWordData(array $wordData)
     {
         $wordData = array_values($wordData);
 
@@ -85,16 +83,30 @@ class Csv extends AbstractFile
 
         $allowedBooleanValues = array(true, false, 1, 0, '1', '0');
 
-        if (isset($wordData[1]) && !in_array($wordData[1], $allowedBooleanValues, true))
+        if (isset($wordData[1]))
         {
-            throw new \RuntimeException('Column 2 must be a valid boolean, e.g. either 1 or 0, or omitted.');
+            if (!in_array($wordData[1], $allowedBooleanValues, true))
+            {
+                throw new \RuntimeException('Column 2 must be a valid boolean, e.g. either 1 or 0, or omitted.');
+            }
+            else
+            {
+                $wordData[1] = (bool) $wordData[1];
+            }
         }
 
-        if (isset($wordData[2]) && !in_array($wordData[2], $allowedBooleanValues, true))
+        if (isset($wordData[2]))
         {
-            throw new \RuntimeException('Column 3 must be a valid boolean, e.g. either 1 or 0, or omitted.');
+            if (!in_array($wordData[2], $allowedBooleanValues, true))
+            {
+                throw new \RuntimeException('Column 3 must be a valid boolean, e.g. either 1 or 0, or omitted.');
+            }
+            else
+            {
+                $wordData[2] = (bool) $wordData[2];
+            }
         }
 
-        return true;
+        return $wordData;
     }
 }
