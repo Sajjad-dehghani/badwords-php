@@ -33,7 +33,7 @@ class Php extends AbstractFile
      */
     protected function loadWordsDataFromSource()
     {
-        function includeFile($path)
+        $includeFile = function($path)
         {
             ob_start();
             require($path);
@@ -47,7 +47,7 @@ class Php extends AbstractFile
             return $words;
         };
 
-        $data = includeFile($this->getPath());
+        $data = $includeFile($this->getPath());
         $wordsData = array();
         
         foreach($data as $key => $wordData)

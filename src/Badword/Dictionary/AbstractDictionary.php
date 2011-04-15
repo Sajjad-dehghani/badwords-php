@@ -173,7 +173,11 @@ abstract class AbstractDictionary implements Dictionary
         $words = array();
         foreach($wordsData as $wordData)
         {
-            array_push($words, $this->convertWordDataToObject($wordData));
+            $word = $this->convertWordDataToObject($wordData);
+            if (!in_array($word, $words))
+            {
+                array_push($words, $word);
+            }
         }
 
         return $words;
