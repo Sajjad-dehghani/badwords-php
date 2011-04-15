@@ -178,6 +178,10 @@ abstract class AbstractDictionary implements Dictionary
             {
                 array_push($words, $word);
             }
+            else
+            {
+                unset($word);
+            }
         }
 
         return $words;

@@ -19,7 +19,8 @@ class AbstractDictionaryTest extends \PHPUnit_Framework_TestCase
         array('moo', 1, 0),
         array('boo', 1, 1),
         array('shu', 1),
-        array('kew')
+        array('kew'),
+        array('boo', 1, 1),
     );
 
     /**
@@ -100,7 +101,7 @@ class AbstractDictionaryTest extends \PHPUnit_Framework_TestCase
     {
         $words = $this->dictionaryStub->getWords();
         $this->assertInternalType('array', $words);
-        $this->assertEquals(count(static::$wordsData), count($words));
+        $this->assertEquals(count(static::$wordsData)-1, count($words));
 
         foreach($words as $key => $word)
         {
