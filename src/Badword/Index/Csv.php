@@ -18,69 +18,14 @@ use Badword\Cache;
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
-class Csv extends AbstractIndex
+class Csv extends AbstractFile
 {
-    /**
-     * @var string
-     */
-    protected $path;
-
-    /**
-     * Constucts a new Index.
-     *
-     * @param string $path The path to the CSV file.
-     * @param Cache $cache The caching mechanism to use.
-     */
-    public function __construct($path, Cache $cache = null)
-    {
-        parent::__construct($cache);
-
-        $this->setPath($path);
-    }
-
-    /**
-     * Gets the path to the CSV file.
-     * 
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->path;
-    }
-
-    /**
-     * Sets the path to the CSV file.
-     *
-     * @param string $path
-     * 
-     * @return Csv
-     *
-     * @throws \InvalidArgumentException When the path is invalid.
-     */
-    public function setPath($path)
-    {
-        if (!(is_string($path) && mb_strlen(trim($path)) > 0))
-        {
-            throw new \InvalidArgumentException('Invalid path. Please provide a path to a valid CSV file.');
-        }
-
-        $path = trim($path);
-
-        if (!(is_readable($path) && !is_dir($path)))
-        {
-            throw new \InvalidArgumentException('Invalid path. The specified path is either invalid, can not be found, or can not be read.');
-        }
-
-        $this->path = realpath($path);
-        return $this;
-    }
-
     /**
      * {@inheritdoc}
      */
-    public function getId()
+    protected function getFileType()
     {
-        return 'csv_'.md5($this->getPath());
+        return 'csv';
     }
 
     /**
