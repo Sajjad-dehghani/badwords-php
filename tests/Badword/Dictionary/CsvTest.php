@@ -49,7 +49,7 @@ class CsvTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetWords($expectError, $data)
     {
-        $this->setExpectedException($expectError ? '\RuntimeException' : null);
+        $this->setExpectedException($expectError ? 'Exception' : null);
         
         $dictionary = new Csv($data);
 

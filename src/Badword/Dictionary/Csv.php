@@ -37,7 +37,7 @@ class Csv extends AbstractFile
         if ($handle === false)
         {
             // @codeCoverageIgnoreStart
-            throw new \RuntimeException('Error. CSV file not could be opened.');
+            throw new Exception('Error. CSV file not could be opened.');
             // @codeCoverageIgnoreEnd
         }
 
@@ -52,9 +52,9 @@ class Csv extends AbstractFile
             {
                 $rowData = $this->validateAndCleanWordData($rowData);
             }
-            catch(\RuntimeException $e)
+            catch(Exception $e)
             {
-                throw new \RuntimeException(sprintf('Invalid word data detected in CSV file on row %s. %s', $row, $e->getMessage()));
+                throw new Exception(sprintf('Invalid word data detected in CSV file on row %s. %s', $row, $e->getMessage()));
             }
 
             array_push($wordsData, $rowData);
@@ -70,7 +70,7 @@ class Csv extends AbstractFile
      * 
      * @return boolean
      *
-     * @throws \RuntimeException When an error is detected in the word data.
+     * @throws Exception When an error is detected in the word data.
      */
     protected function validateAndCleanWordData(array $wordData)
     {
@@ -78,7 +78,7 @@ class Csv extends AbstractFile
 
         if (!(isset($wordData[0]) && is_string($wordData[0]) && mb_strlen(trim($wordData[0])) > 0))
         {
-            throw new \RuntimeException(sprintf('Expected word in column 1 to be non-empty string.'));
+            throw new Exception(sprintf('Expected word in column 1 to be non-empty string.'));
         }
 
         $allowedBooleanValues = array(true, false, 1, 0, '1', '0');
@@ -87,7 +87,7 @@ class Csv extends AbstractFile
         {
             if (!in_array($wordData[1], $allowedBooleanValues, true))
             {
-                throw new \RuntimeException(sprintf('Expected must start word "%s" in column 2 to be either 1, 0, or to be omitted.', $wordData[1]));
+                throw new Exception(sprintf('Expected must start word "%s" in column 2 to be either 1, 0, or to be omitted.', $wordData[1]));
             }
             else
             {
@@ -99,7 +99,7 @@ class Csv extends AbstractFile
         {
             if (!in_array($wordData[2], $allowedBooleanValues, true))
             {
-                throw new \RuntimeException(sprintf('Expected must end word "%s" in column 2 to be either 1, 0, or to be omitted.', $wordData[2]));
+                throw new Exception(sprintf('Expected must end word "%s" in column 2 to be either 1, 0, or to be omitted.', $wordData[2]));
             }
             else
             {

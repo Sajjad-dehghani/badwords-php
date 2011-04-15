@@ -162,7 +162,7 @@ abstract class AbstractDictionary implements Dictionary
 
         if (!(is_array($wordsData) && count($wordsData) > 0))
         {
-            throw new \RuntimeException('Words could not be loaded. Load failed or source was empty.');
+            throw new Exception('Words could not be loaded. Load failed or source was empty.');
         }
 
         if (!$fromCache)

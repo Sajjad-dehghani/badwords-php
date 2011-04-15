@@ -51,7 +51,7 @@ class PhpTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetWords($expectError, $data)
     {
-        $this->setExpectedException($expectError ? '\RuntimeException' : null);
+        $this->setExpectedException($expectError ? '\Badword\Dictionary\Exception' : null);
         
         $dictionary = new Php($data);
 
