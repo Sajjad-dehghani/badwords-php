@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Badword\Index;
+namespace Badword\Dictionary;
 
 class CsvTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Csv
      */
-    protected $indexStub;
+    protected $dictionaryStub;
 
     protected function getFixtureDir()
     {
@@ -25,12 +25,12 @@ class CsvTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->indexStub = new Csv($this->getFixtureDir().'/words.csv');
+        $this->dictionaryStub = new Csv($this->getFixtureDir().'/words.csv');
     }
 
     public function testGetId()
     {
-        $this->assertEquals('csv_'.md5($this->getFixtureDir().'/words.csv'), $this->indexStub->getId());
+        $this->assertEquals('csv_'.md5($this->getFixtureDir().'/words.csv'), $this->dictionaryStub->getId());
     }
 
     public function dataProviderGetWords()
@@ -51,9 +51,9 @@ class CsvTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException($expectError ? '\RuntimeException' : null);
         
-        $index = new Csv($data);
+        $dictionary = new Csv($data);
 
-        $words = $index->getWords();
+        $words = $dictionary->getWords();
         $this->assertInternalType('array', $words);
         $this->assertEquals(8, count($words));
         

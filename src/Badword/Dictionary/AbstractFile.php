@@ -9,17 +9,17 @@
  * file that was distributed with this source code.
  */
 
-namespace Badword\Index;
+namespace Badword\Dictionary;
 
 use Badword\Cache;
 
 /**
- * AbstractFile is the base class for all Indexes
+ * AbstractFile is the base class for all Dictionaries
  * that use a file as their source.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
-abstract class AbstractFile extends AbstractIndex
+abstract class AbstractFile extends AbstractDictionary
 {
     /**
      * @var string
@@ -27,7 +27,7 @@ abstract class AbstractFile extends AbstractIndex
     protected $path;
 
     /**
-     * Constucts a new Index.
+     * Constucts a new Dictionary.
      *
      * @param string $path The path to the source file.
      * @param Cache $cache The caching mechanism to use.
@@ -85,7 +85,7 @@ abstract class AbstractFile extends AbstractIndex
     }
 
     /**
-     * Gets the type of source file this Index uses.
+     * Gets the type of source file this Dictionary uses.
      *
      * @return string
      */

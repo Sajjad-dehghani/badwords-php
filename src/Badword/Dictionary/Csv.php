@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Badword\Index;
+namespace Badword\Dictionary;
 
 /**
  * Csv loads and formats a list of bad words from a CSV file.

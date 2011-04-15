@@ -9,19 +9,19 @@
  * file that was distributed with this source code.
  */
 
-namespace Badword\Index;
+namespace Badword\Dictionary;
 
 use Badword\Cache;
 use Badword\Cache\None;
-use Badword\Index;
+use Badword\Dictionary;
 use Badword\Word;
 
 /**
- * AbstractIndex is the base class for all Index classes.
+ * AbstractDictionary is the base class for all Dictionary classes.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
-abstract class AbstractIndex implements Index
+abstract class AbstractDictionary implements Dictionary
 {
     /**
      * @var Cache
@@ -44,7 +44,7 @@ abstract class AbstractIndex implements Index
     protected $words;
 
     /**
-     * Constucts a new Index.
+     * Constucts a new Dictionary.
      * 
      * @param Cache $cache The caching mechanism to use.
      */
@@ -68,7 +68,7 @@ abstract class AbstractIndex implements Index
      * 
      * @param Cache $cache
      * 
-     * @return AbstractIndex
+     * @return AbstractDictionary
      */
     public function setCache(Cache $cache)
     {
@@ -91,7 +91,7 @@ abstract class AbstractIndex implements Index
      *
      * @param boolean $mustEndWordDefault
      *
-     * @return AbstractIndex
+     * @return AbstractDictionary
      */
     public function setMustEndWordDefault($mustEndWordDefault = false)
     {
@@ -119,7 +119,7 @@ abstract class AbstractIndex implements Index
      *
      * @param boolean $mustStartWordDefault
      *
-     * @return AbstractIndex
+     * @return AbstractDictionary
      */
     public function setMustStartWordDefault($mustStartWordDefault = false)
     {

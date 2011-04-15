@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Badword\Index;
+namespace Badword\Dictionary;
 
 class AbstractFileTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var AbstractFile
      */
-    protected $indexStub;
+    protected $dictionaryStub;
 
     protected function getFixtureDir()
     {
@@ -25,13 +25,13 @@ class AbstractFileTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->indexStub = $this->getMock(
-            '\Badword\Index\AbstractFile',
+        $this->dictionaryStub = $this->getMock(
+            '\Badword\Dictionary\AbstractFile',
             array('getFileType', 'loadWordsDataFromSource'),
             array($this->getFixtureDir().'/words.csv')
         );
 
-        $this->indexStub->expects($this->any())
+        $this->dictionaryStub->expects($this->any())
                         ->method('getFileType')
                         ->will($this->returnValue('mock'));
     }
@@ -60,12 +60,12 @@ class AbstractFileTest extends \PHPUnit_Framework_TestCase
     public function testSettingPath($expectError, $data)
     {
         $this->setExpectedException($expectError ? '\InvalidArgumentException' : null);
-        $this->assertInstanceOf('\Badword\Index\AbstractFile', $this->indexStub->setPath($data));
-        $this->assertEquals(realpath($data), $this->indexStub->getPath());
+        $this->assertInstanceOf('\Badword\Dictionary\AbstractFile', $this->dictionaryStub->setPath($data));
+        $this->assertEquals(realpath($data), $this->dictionaryStub->getPath());
     }
 
     public function testGetId()
     {
-        $this->assertEquals('mock_'.md5($this->getFixtureDir().'/words.csv'), $this->indexStub->getId());
+        $this->assertEquals('mock_'.md5($this->getFixtureDir().'/words.csv'), $this->dictionaryStub->getId());
     }
 }

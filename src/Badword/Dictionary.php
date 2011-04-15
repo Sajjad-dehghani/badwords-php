@@ -12,14 +12,14 @@
 namespace Badword;
 
 /**
- * Index loads a list of bad words.
+ * Dictionary loads a list of bad words.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
-interface Index
+interface Dictionary
 {
     /**
-     * Gets the unique ID for the Index.
+     * Gets the unique ID for the Dictionary.
      *
      * @return string
      */

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Badword\Index;
+namespace Badword\Dictionary;
 
 /**
  * Php loads and formats a list of bad words from a PHP file.

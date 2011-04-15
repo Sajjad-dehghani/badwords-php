@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Badword\Index;
+namespace Badword\Dictionary;
 
-class AbstractIndexTest extends \PHPUnit_Framework_TestCase
+class AbstractDictionaryTest extends \PHPUnit_Framework_TestCase
 {
     protected static $wordsData = array(
         array('foo', 0, 0),
@@ -23,27 +23,27 @@ class AbstractIndexTest extends \PHPUnit_Framework_TestCase
     );
 
     /**
-     * @var AbstractIndex
+     * @var AbstractDictionary
      */
-    protected $indexStub;
+    protected $dictionaryStub;
 
     protected function setUp()
     {
-        $this->indexStub = $this->getMock('\Badword\Index\AbstractIndex', array('loadWordsDataFromSource', 'getId'));
+        $this->dictionaryStub = $this->getMock('\Badword\Dictionary\AbstractDictionary', array('loadWordsDataFromSource', 'getId'));
 
-        $this->indexStub->expects($this->any())
+        $this->dictionaryStub->expects($this->any())
                         ->method('getId')
-                        ->will($this->returnValue('mock_index'));
+                        ->will($this->returnValue('mock_dictionary'));
 
-        $this->indexStub->expects($this->any())
+        $this->dictionaryStub->expects($this->any())
                         ->method('loadWordsDataFromSource')
                         ->will($this->returnValue(static::$wordsData));
     }
     
     public function testGetCache()
     {
-        $this->assertInstanceOf('\Badword\Cache', $this->indexStub->getCache());
-        $this->assertInstanceOf('\Badword\Cache\None', $this->indexStub->getCache());
+        $this->assertInstanceOf('\Badword\Cache', $this->dictionaryStub->getCache());
+        $this->assertInstanceOf('\Badword\Cache\None', $this->dictionaryStub->getCache());
     }
 
     public function dataProviderSettingMustEndWordDefault()
@@ -67,8 +67,8 @@ class AbstractIndexTest extends \PHPUnit_Framework_TestCase
     public function testSettingMustEndWordDefault($expectError, $data)
     {
         $this->setExpectedException($expectError ? '\InvalidArgumentException' : null);
-        $this->assertInstanceOf('\Badword\Index\AbstractIndex', $this->indexStub->setMustEndWordDefault($data));
-        $this->assertEquals($data, $this->indexStub->getMustEndWordDefault());
+        $this->assertInstanceOf('\Badword\Dictionary\AbstractDictionary', $this->dictionaryStub->setMustEndWordDefault($data));
+        $this->assertEquals($data, $this->dictionaryStub->getMustEndWordDefault());
     }
 
     public function dataProviderSettingMustStartWordDefault()
@@ -92,13 +92,13 @@ class AbstractIndexTest extends \PHPUnit_Framework_TestCase
     public function testSettingMustStartWordDefault($expectError, $data)
     {
         $this->setExpectedException($expectError ? '\InvalidArgumentException' : null);
-        $this->assertInstanceOf('\Badword\Index\AbstractIndex', $this->indexStub->setMustStartWordDefault($data));
-        $this->assertEquals($data, $this->indexStub->getMustStartWordDefault());
+        $this->assertInstanceOf('\Badword\Dictionary\AbstractDictionary', $this->dictionaryStub->setMustStartWordDefault($data));
+        $this->assertEquals($data, $this->dictionaryStub->getMustStartWordDefault());
     }
 
     public function testGetWords()
     {
-        $words = $this->indexStub->getWords();
+        $words = $this->dictionaryStub->getWords();
         $this->assertInternalType('array', $words);
         $this->assertEquals(count(static::$wordsData), count($words));
 
