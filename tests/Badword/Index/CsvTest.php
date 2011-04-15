@@ -18,66 +18,29 @@ class CsvTest extends \PHPUnit_Framework_TestCase
      */
     protected $indexStub;
 
-    protected function getFixturePath()
+    protected function getFixtureDir()
     {
-        return __DIR__.'/Fixtures/words.csv';
+        return __DIR__.'/Fixtures/Csv';
     }
 
     protected function setUp()
     {
-        $this->indexStub = new Csv($this->getFixturePath());
-    }
-    
-    public function testConstruct()
-    {
-        $csvIndex = new Csv($this->getFixturePath());
-        $this->assertEquals($this->getFixturePath(), $csvIndex->getPath());
-
-        $this->assertInstanceOf('\Badword\Cache', $csvIndex->getCache());
-        $this->assertInstanceOf('\Badword\Cache\None', $csvIndex->getCache());
-    }
-
-    public function dataProviderSettingPath()
-    {
-        return array(
-            array(true, array('foo')),
-            array(true, true),
-            array(true, false),
-            array(true, null),
-            array(true, 0),
-            array(true, 1),
-            array(true, ''),
-            array(true, '    '),
-            array(true, 'foobar'),
-            array(true, '/i/dont/exist.csv'),
-            array(true, __DIR__.'/Fixtures/'),
-            array(false, $this->getFixturePath()),
-        );
-    }
-
-    /**
-     * @dataProvider dataProviderSettingPath
-     */
-    public function testSettingPath($expectError, $data)
-    {
-        $this->setExpectedException($expectError ? '\InvalidArgumentException' : null);
-        $this->assertInstanceOf('\Badword\Index\Csv', $this->indexStub->setPath($data));
-        $this->assertEquals(realpath($data), $this->indexStub->getPath());
+        $this->indexStub = new Csv($this->getFixtureDir().'/words.csv');
     }
 
     public function testGetId()
     {
-        $this->assertEquals('csv_'.md5($this->getFixturePath()), $this->indexStub->getId());
+        $this->assertEquals('csv_'.md5($this->getFixtureDir().'/words.csv'), $this->indexStub->getId());
     }
 
     public function dataProviderGetWords()
     {
         return array(
-            array(true, __DIR__.'/Fixtures/Csv/empty.csv'),
-            array(true, __DIR__.'/Fixtures/Csv/invalid_word.csv'),
-            array(true, __DIR__.'/Fixtures/Csv/invalid_must_start_word.csv'),
-            array(true, __DIR__.'/Fixtures/Csv/invalid_must_end_word.csv'),
-            array(false, $this->getFixturePath()),
+            array(true, $this->getFixtureDir().'/empty.csv'),
+            array(true, $this->getFixtureDir().'/invalid_word.csv'),
+            array(true, $this->getFixtureDir().'/invalid_must_start_word.csv'),
+            array(true, $this->getFixtureDir().'/invalid_must_end_word.csv'),
+            array(false, $this->getFixtureDir().'/words.csv'),
         );
     }
 
@@ -91,9 +54,9 @@ class CsvTest extends \PHPUnit_Framework_TestCase
         $index = new Csv($data);
 
         $words = $index->getWords();
-
         $this->assertInternalType('array', $words);
         $this->assertEquals(8, count($words));
+        
         foreach($words as $key => $word)
         {
             $this->assertInstanceOf('\Badword\Word', $word);

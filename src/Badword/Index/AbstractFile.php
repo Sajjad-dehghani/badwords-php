@@ -11,6 +11,8 @@
 
 namespace Badword\Index;
 
+use Badword\Cache;
+
 /**
  * AbstractFile is the base class for all Indexes
  * that use a file as their source.
