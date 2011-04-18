@@ -30,7 +30,7 @@ class CsvTest extends \PHPUnit_Framework_TestCase
 
     public function testGetId()
     {
-        $this->assertEquals('csv_'.md5($this->getFixtureDir().'/words.csv'), $this->dictionaryStub->getId());
+        $this->assertEquals('csv_a376ca034e7d6538415b2a2d615bc3df', $this->dictionaryStub->getId());
     }
 
     public function dataProviderGetWords()

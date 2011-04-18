@@ -30,7 +30,7 @@ class PhpTest extends \PHPUnit_Framework_TestCase
 
     public function testGetId()
     {
-        $this->assertEquals('php_'.md5($this->getFixtureDir().'/words.php'), $this->dictionaryStub->getId());
+        $this->assertEquals('php_0acd5ae3d381cf109c86466b3cb7af73', $this->dictionaryStub->getId());
     }
 
     public function dataProviderGetWords()

@@ -87,7 +87,7 @@ abstract class AbstractFile extends AbstractDictionary
      */
     public function getId()
     {
-        return $this->getFileType().'_'.md5($this->getPath());
+        return $this->getFileType().'_'.md5($this->getPath().';'.$this->getMustStartWordDefault().';'.$this->getMustEndWordDefault());
     }
 
     /**

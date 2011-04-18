@@ -66,6 +66,6 @@ class AbstractFileTest extends \PHPUnit_Framework_TestCase
 
     public function testGetId()
     {
-        $this->assertEquals('mock_'.md5($this->getFixtureDir().'/words.csv'), $this->dictionaryStub->getId());
+        $this->assertEquals('mock_a376ca034e7d6538415b2a2d615bc3df', $this->dictionaryStub->getId());
     }
 }
