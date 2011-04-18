@@ -31,6 +31,12 @@ class PhpTest extends \PHPUnit_Framework_TestCase
     public function testGetId()
     {
         $this->assertEquals('php_0acd5ae3d381cf109c86466b3cb7af73', $this->dictionaryStub->getId());
+
+        $this->dictionaryStub->setMustStartWordDefault(true);
+        $this->assertEquals('php_0e742dd5b48d6ee87d0f391b0458cfb5', $this->dictionaryStub->getId());
+
+        $this->dictionaryStub->setMustEndWordDefault(true);
+        $this->assertEquals('php_7c4ba9bef3c3d2535f91061372389cb0', $this->dictionaryStub->getId());
     }
 
     public function dataProviderGetWords()

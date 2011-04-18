@@ -31,6 +31,12 @@ class CsvTest extends \PHPUnit_Framework_TestCase
     public function testGetId()
     {
         $this->assertEquals('csv_a376ca034e7d6538415b2a2d615bc3df', $this->dictionaryStub->getId());
+
+        $this->dictionaryStub->setMustStartWordDefault(true);
+        $this->assertEquals('csv_58a1926785a95f3204cb01a652df86bf', $this->dictionaryStub->getId());
+
+        $this->dictionaryStub->setMustEndWordDefault(true);
+        $this->assertEquals('csv_25b3fcddbb3ac2f1707fe04351613a7c', $this->dictionaryStub->getId());
     }
 
     public function dataProviderGetWords()

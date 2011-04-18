@@ -67,5 +67,11 @@ class AbstractFileTest extends \PHPUnit_Framework_TestCase
     public function testGetId()
     {
         $this->assertEquals('mock_a376ca034e7d6538415b2a2d615bc3df', $this->dictionaryStub->getId());
+
+        $this->dictionaryStub->setMustStartWordDefault(true);
+        $this->assertEquals('mock_58a1926785a95f3204cb01a652df86bf', $this->dictionaryStub->getId());
+
+        $this->dictionaryStub->setMustEndWordDefault(true);
+        $this->assertEquals('mock_25b3fcddbb3ac2f1707fe04351613a7c', $this->dictionaryStub->getId());
     }
 }
