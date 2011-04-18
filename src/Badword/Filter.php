@@ -22,6 +22,8 @@ use Badword\Filter\Config;
  */
 class Filter
 {
+    const REGEXP_MAX_LENGTH = 3000;
+
     /**
      * @var Cache
      */
@@ -36,6 +38,11 @@ class Filter
      * @var array
      */
     protected $dictionaries = array();
+
+    /**
+     * @var array
+     */
+    protected $regExps;
 
     /**
      * Constructs a new Filter.
@@ -93,6 +100,11 @@ class Filter
      */
     public function setConfig(Config $config)
     {
+        if($config !== $this->getConfig())
+        {
+            $this->clearRegExps();
+        }
+
         $this->config = $config;
         return $this;
     }
@@ -109,6 +121,8 @@ class Filter
         if(!in_array($dictionary, $this->getDictionaries()))
         {
             array_push($this->dictionaries, $dictionary);
+            
+            $this->clearRegExps();
         }
 
         return $this;
@@ -178,5 +192,94 @@ class Filter
         }
 
         return $this;
+    }
+
+    /**
+     * Gets the regular expressions for the Dictionaries.
+     * 
+     * @return array
+     */
+    public function getRegExps()
+    {
+        if($this->regExps === null)
+        {
+            $this->regExps = $this->generateRegExps();
+        }
+
+        return $this->regExps;
+    }
+
+    /**
+     * Clears the local cache of regular expressions.
+     * 
+     * @return Filter 
+     */
+    protected function clearRegExps()
+    {
+        $this->regExps = null;
+        return $this;
+    }
+
+    /**
+     * Generates the regular expressions for the Dictionaries using the Config.
+     *
+     * @return array
+     */
+    protected function generateRegExps()
+    {
+        $regExps = array();
+
+        foreach($this->getDictionaries() as $dictionary)
+        {
+            $regExps[$dictionary->getId()] = $this->generateDictionaryRegExps($dictionary);
+        }
+
+        return $regExps;
+    }
+
+    /**
+     * Generates the regular expressions for a Dictionary using the Config.
+     *
+     * @param Dictionary $dictionary
+     *
+     * @return array
+     */
+    protected function generateDictionaryRegExps(Dictionary $dictionary)
+    {
+        // Convert each Word in the Dictionary to a regular expressions
+        $wordRegExps = array();
+        foreach($dictionary->getWords() as $word)
+        {
+            array_push($wordRegExps, $this->getConfig()->apply($word));
+        }
+
+        $regExps = array();
+        $totalLength = 0;
+
+        // Group the regular expressions to be concatenated with a maximum
+        // length of REGEXP_MAX_LENGTH for each concatenation
+        foreach($wordRegExps as $wordRegExp)
+        {
+            $wordRegExp = '('.$wordRegExp.')';
+
+            $totalLength += mb_strlen($wordRegExp);
+
+            $index = ceil($totalLength / self::REGEXP_MAX_LENGTH) - 1;
+            if(!isset($regExps[$index]))
+            {
+                $regExps[$index] = array();
+            }
+
+            // Stor
+            array_push($regExps[$index], $wordRegExp);
+        }
+
+        // Concatenate the Word regular expressions
+        foreach($regExps as $key => $wordRegExps)
+        {
+            $regExps[$key] = implode('|', $wordRegExps);
+        }
+
+        return $regExps;
     }
 }
