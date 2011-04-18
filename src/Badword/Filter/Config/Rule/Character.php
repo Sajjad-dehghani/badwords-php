@@ -66,14 +66,16 @@ class Character implements Rule
      */
     public function addAlternativeCharacter($alternativeCharacter)
     {
-        if(!$this->validateAlternativeCharacter($character))
+        if(!$this->validateAlternativeCharacter($alternativeCharacter))
         {
             throw new \InvalidArgumentException(sprintf('Invalid alternative character "%s". Please provide a single string character.', $alternativeCharacter));
         }
 
+        $alternativeCharacter = $this->cleanAlternativeCharacter($alternativeCharacter);
+
         if(!in_array($alternativeCharacter, $this->alternativeCharacters))
         {
-            array_push($this->alternativeCharacters, $this->cleanAlternativeCharacter($alternativeCharacter));
+            array_push($this->alternativeCharacters, $alternativeCharacter);
         }
 
         return $this;
@@ -98,7 +100,7 @@ class Character implements Rule
             $alternativeCharacters[$key] = $this->cleanAlternativeCharacter($alternativeCharacter);
         }
 
-        $this->alternativeCharacters = array_unique(array_merge($this->alternativeCharacters, array_values($alternativeCharacters)));
+        $this->alternativeCharacters = array_values(array_unique(array_merge($this->alternativeCharacters, array_values($alternativeCharacters))));
         return $this;
     }
 
@@ -131,7 +133,7 @@ class Character implements Rule
             $alternativeCharacters[$key] = $this->cleanAlternativeCharacter($alternativeCharacter);
         }
 
-        $this->alternativeCharacters = array_unique(array_values($alternativeCharacters));
+        $this->alternativeCharacters = array_values(array_unique($alternativeCharacters));
         return $this;
     }
 
@@ -180,7 +182,7 @@ class Character implements Rule
      */
     public function setCharacter($character)
     {
-        if(!(mb_strlen($character) === 1))
+        if(!(is_string($character) && mb_strlen($character) === 1))
         {
             throw new \InvalidArgumentException(sprintf('Invalid character "%s". Please provide a single character string.', $character));
         }
@@ -210,13 +212,13 @@ class Character implements Rule
      */
     public function setCanBeRepeatedFor($canBeRepeatedFor = null)
     {
-        if(!($canBeRepeatedFor === null || ((is_int($canBeRepeatedFor) || ctype_digit($canBeRepeatedFor)) && $canBeRepeatedFor > 0)))
+        if(!($canBeRepeatedFor === null || (is_int($canBeRepeatedFor) && $canBeRepeatedFor > 0)))
         {
             throw new \InvalidArgumentException(sprintf('Invalid can be repeated for value "%s". Please provide an integer greater than 0 or null.', $canBeRepeatedFor));
         }
 
-        $this->canBeRepeatedFor = $canBeRepeatedFor !== null ? (int) $canBeRepeatedFor : null;
-        return null;
+        $this->canBeRepeatedFor = $canBeRepeatedFor ?: null;
+        return $this;
     }
 
     /**
@@ -252,6 +254,6 @@ class Character implements Rule
      */
     public function apply($data, Word $word)
     {
-        // @TODO: Implement regular expression generation
+        return $data;
     }
 }
