@@ -66,12 +66,26 @@ class AbstractFileTest extends \PHPUnit_Framework_TestCase
 
     public function testGetId()
     {
-        $this->assertEquals('mock_a376ca034e7d6538415b2a2d615bc3df', $this->dictionaryStub->getId());
+        $dictionaryStub = $this->getMock(
+            '\Badword\Dictionary\AbstractFile',
+            array('getFileType', 'getPath', 'loadWordsDataFromSource'),
+            array($this->getFixtureDir().'/words.csv')
+        );
 
-        $this->dictionaryStub->setMustStartWordDefault(true);
-        $this->assertEquals('mock_58a1926785a95f3204cb01a652df86bf', $this->dictionaryStub->getId());
+        $dictionaryStub->expects($this->any())
+                        ->method('getFileType')
+                        ->will($this->returnValue('mock'));
 
-        $this->dictionaryStub->setMustEndWordDefault(true);
-        $this->assertEquals('mock_25b3fcddbb3ac2f1707fe04351613a7c', $this->dictionaryStub->getId());
+        $dictionaryStub->expects($this->any())
+                        ->method('getPath')
+                        ->will($this->returnValue('/i/am/a/static/path'));
+        
+        $this->assertEquals('mock_9d06107d83cdb13045ef5321f493e8ae', $dictionaryStub->getId());
+
+        $dictionaryStub->setMustStartWordDefault(true);
+        $this->assertEquals('mock_2d4ddf6206dee610468f3df3517a30ad', $dictionaryStub->getId());
+
+        $dictionaryStub->setMustEndWordDefault(true);
+        $this->assertEquals('mock_b7b43ae4d94bbf7a6fa92f96c99377f2', $dictionaryStub->getId());
     }
 }

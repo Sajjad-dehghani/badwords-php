@@ -30,13 +30,23 @@ class CsvTest extends \PHPUnit_Framework_TestCase
 
     public function testGetId()
     {
-        $this->assertEquals('csv_a376ca034e7d6538415b2a2d615bc3df', $this->dictionaryStub->getId());
+        $dictionaryStub = $this->getMock(
+            '\Badword\Dictionary\Csv',
+            array('getPath'),
+            array($this->getFixtureDir().'/words.csv')
+        );
 
-        $this->dictionaryStub->setMustStartWordDefault(true);
-        $this->assertEquals('csv_58a1926785a95f3204cb01a652df86bf', $this->dictionaryStub->getId());
+        $dictionaryStub->expects($this->any())
+                       ->method('getPath')
+                       ->will($this->returnValue('/i/am/a/csv/static/path'));
 
-        $this->dictionaryStub->setMustEndWordDefault(true);
-        $this->assertEquals('csv_25b3fcddbb3ac2f1707fe04351613a7c', $this->dictionaryStub->getId());
+        $this->assertEquals('csv_56c37148695fefc44c177cd4551d78cf', $dictionaryStub->getId());
+
+        $dictionaryStub->setMustStartWordDefault(true);
+        $this->assertEquals('csv_d632194be0b9cd9f9238a49401cdb8f6', $dictionaryStub->getId());
+
+        $dictionaryStub->setMustEndWordDefault(true);
+        $this->assertEquals('csv_d0a1f2faed8ce6f4586315b32e8e4755', $dictionaryStub->getId());
     }
 
     public function dataProviderGetWords()

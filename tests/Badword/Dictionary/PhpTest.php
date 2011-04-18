@@ -30,13 +30,23 @@ class PhpTest extends \PHPUnit_Framework_TestCase
 
     public function testGetId()
     {
-        $this->assertEquals('php_0acd5ae3d381cf109c86466b3cb7af73', $this->dictionaryStub->getId());
+        $dictionaryStub = $this->getMock(
+            '\Badword\Dictionary\Php',
+            array('getPath'),
+            array($this->getFixtureDir().'/words.php')
+        );
 
-        $this->dictionaryStub->setMustStartWordDefault(true);
-        $this->assertEquals('php_0e742dd5b48d6ee87d0f391b0458cfb5', $this->dictionaryStub->getId());
+        $dictionaryStub->expects($this->any())
+                       ->method('getPath')
+                       ->will($this->returnValue('/i/am/a/php/static/path'));
 
-        $this->dictionaryStub->setMustEndWordDefault(true);
-        $this->assertEquals('php_7c4ba9bef3c3d2535f91061372389cb0', $this->dictionaryStub->getId());
+        $this->assertEquals('php_e9a486d6d5fc2ecee393a8e810962e1e', $dictionaryStub->getId());
+
+        $dictionaryStub->setMustStartWordDefault(true);
+        $this->assertEquals('php_6afbe8c88077c36a8f2f2f631268070b', $dictionaryStub->getId());
+
+        $dictionaryStub->setMustEndWordDefault(true);
+        $this->assertEquals('php_e8f4fa15dc2aeada588130fb270854e0', $dictionaryStub->getId());
     }
 
     public function dataProviderGetWords()
