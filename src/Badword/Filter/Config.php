@@ -78,11 +78,11 @@ class Config
      */
     public function addRules(array $rules)
     {
-        foreach($rules as $rule)
+        foreach($rules as $key => $rule)
         {
             if(!($rule instanceof Rule))
             {
-                throw new \InvalidArgumentException('Invalid rule. Expected instance of \Badword\Filter\Config\Rule.');
+                throw new \InvalidArgumentException(sprintf('Invalid rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
             }
         }
 
@@ -115,11 +115,11 @@ class Config
      */
     public function setRules(array $rules)
     {
-        foreach($rules as $rule)
+        foreach($rules as $key => $rule)
         {
             if(!($rule instanceof Rule))
             {
-                throw new \InvalidArgumentException('Invalid rule. Expected instance of \Badword\Filter\Config\Rule.');
+                throw new \InvalidArgumentException(sprintf('Invalid rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
             }
         }
 
@@ -161,11 +161,11 @@ class Config
      */
     public function addPreRules(array $rules)
     {
-        foreach($rules as $rule)
+        foreach($rules as $key => $rule)
         {
             if(!($rule instanceof Rule))
             {
-                throw new \InvalidArgumentException('Invalid "pre" rule. Expected instance of \Badword\Filter\Config\Rule.');
+                throw new \InvalidArgumentException(sprintf('Invalid "pre" rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
             }
         }
 
@@ -198,11 +198,11 @@ class Config
      */
     public function setPreRules(array $rules)
     {
-        foreach($rules as $rule)
+        foreach($rules as $key => $rule)
         {
             if(!($rule instanceof Rule))
             {
-                throw new \InvalidArgumentException('Invalid "pre" rule. Expected instance of \Badword\Filter\Config\Rule.');
+                throw new \InvalidArgumentException(sprintf('Invalid "pre" rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
             }
         }
 
@@ -244,11 +244,11 @@ class Config
      */
     public function addPostRules(array $rules)
     {
-        foreach($rules as $rule)
+        foreach($rules as $key => $rule)
         {
             if(!($rule instanceof Rule))
             {
-                throw new \InvalidArgumentException('Invalid "post" rule. Expected instance of \Badword\Filter\Config\Rule.');
+                throw new \InvalidArgumentException(sprintf('Invalid "post" rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
             }
         }
 
@@ -281,11 +281,11 @@ class Config
      */
     public function setPostRules(array $rules)
     {
-        foreach($rules as $rule)
+        foreach($rules as $key => $rule)
         {
             if(!($rule instanceof Rule))
             {
-                throw new \InvalidArgumentException('Invalid "post" rule. Expected instance of \Badword\Filter\Config\Rule.');
+                throw new \InvalidArgumentException(sprintf('Invalid "post" rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
             }
         }
 

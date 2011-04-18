@@ -125,11 +125,11 @@ class Filter
      */
     public function addDictionaries(array $dictionaries)
     {
-        foreach($dictionaries as $dictionary)
+        foreach($dictionaries as $key => $dictionary)
         {
             if(!($dictionary instanceof Dictionary))
             {
-                throw new \InvalidArgumentException('Invalid dictionary. Expected instance of \Badword\Filter\Config\Dictionary.');
+                throw new \InvalidArgumentException(sprintf('Invalid dictionary at key "%s". Expected instance of \Badword\Dictionary.', $key));
             }
         }
 
@@ -166,7 +166,7 @@ class Filter
         {
             if(!($dictionary instanceof Dictionary))
             {
-                throw new \InvalidArgumentException('Invalid dictionary. Expected instance of \Badword\Filter\Config\Dictionary.');
+                throw new \InvalidArgumentException(sprintf('Invalid dictionary at key "%s". Expected instance of \Badword\Dictionary.', $key));
             }
         }
 
