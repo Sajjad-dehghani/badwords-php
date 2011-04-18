@@ -203,7 +203,25 @@ class Filter
     {
         if($this->regExps === null)
         {
-            $this->regExps = $this->generateRegExps();
+            $this->regExps = array();
+            
+            foreach($this->getDictionaries() as $dictionary)
+            {
+                $fromCache = true;
+                $regExps = $this->loadDictionaryRegExpsFromCache($dictionary);
+                if(!$regExps)
+                {
+                    $fromCache = false;
+                    $regExps = $this->generateDictionaryRegExps($dictionary);
+                }
+
+                if(!$fromCache)
+                {
+                    $this->saveDictionaryRegExpsToCache($dictionary, $regExps);
+                }
+
+                array_push($this->regExps, $regExps);
+            }
         }
 
         return $this->regExps;
@@ -221,20 +239,17 @@ class Filter
     }
 
     /**
-     * Generates the regular expressions for the Dictionaries using the Config.
+     * Loads the Dictionary regular expressions from the cache.
+     *
+     * @param Dictionary $dictionary
      *
      * @return array
      */
-    protected function generateRegExps()
+    protected function loadDictionaryRegExpsFromCache(Dictionary $dictionary)
     {
-        $regExps = array();
-
-        foreach($this->getDictionaries() as $dictionary)
-        {
-            $regExps[$dictionary->getId()] = $this->generateDictionaryRegExps($dictionary);
-        }
-
-        return $regExps;
+        $cache = $this->getCache();
+        $cacheKey = $this->getDictionaryCacheKey($dictionary);
+        return $cache->has($cacheKey) ? $cache->get($cacheKey) : null;
     }
 
     /**
@@ -281,5 +296,30 @@ class Filter
         }
 
         return $regExps;
+    }
+
+    /**
+     * Saves the Dictionary regular expressions to the cache.
+     *
+     * @param Dictionary $dictionary
+     * @param array $regExps
+     *
+     * @return boolean
+     */
+    protected function saveDictionaryRegExpsToCache(Dictionary $dictionary, array $regExps)
+    {
+        return $this->getCache()->set($this->getDictionaryCacheKey($dictionary), $regExps);
+    }
+
+    /**
+     * Gets the key used to read/store the Dictionary regular expressions from the cache.
+     *
+     * @param Dictionary $dictionary
+     *
+     * @return string
+     */
+    protected function getDictionaryCacheKey(Dictionary $dictionary)
+    {
+        return $dictionary->getId().'_regexps';
     }
 }

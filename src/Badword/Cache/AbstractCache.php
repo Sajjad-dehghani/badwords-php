@@ -20,6 +20,9 @@ use Badword\Cache;
  */
 abstract class AbstractCache implements Cache
 {
+    const DEFAULT_LIFETIME = null;
+    const DEFAULT_PREFIX = 'badwords-php_';
+
     /**
      * @var integer
      */
@@ -36,7 +39,7 @@ abstract class AbstractCache implements Cache
      * @param string $prefix The text to prefix to each cache entry.
      * @param integer $defaultLifetime The default amount of time the data should be stored.
      */
-    public function __construct($prefix = 'badword_', $defaultLifetime = null)
+    public function __construct($prefix = self::DEFAULT_PREFIX, $defaultLifetime = self::DEFAULT_LIFETIME)
     {
         $this->setPrefix($prefix);
         $this->setDefaultLifetime($defaultLifetime);
@@ -59,7 +62,7 @@ abstract class AbstractCache implements Cache
      *
      * @return AbstractCache
      */
-    public function setDefaultLifetime($defaultLifetime = null)
+    public function setDefaultLifetime($defaultLifetime = self::DEFAULT_LIFETIME)
     {
         if(!$this->validateLifetime($defaultLifetime))
         {

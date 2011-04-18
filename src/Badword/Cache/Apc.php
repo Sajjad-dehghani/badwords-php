@@ -23,7 +23,7 @@ class Apc extends AbstractCache
      *
      * @throws \RuntimeException When APC can not be found or used.
      */
-    public function __construct($prefix = 'badword_', $defaultLifetime = null)
+    public function __construct($prefix = self::DEFAULT_PREFIX, $defaultLifetime = null)
     {
         if(!function_exists('apc_store') || !ini_get('apc.enabled'))
         {

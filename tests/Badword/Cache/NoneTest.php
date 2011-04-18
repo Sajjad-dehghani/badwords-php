@@ -26,7 +26,7 @@ class NoneTest extends \PHPUnit_Framework_TestCase
     public function testConstruct()
     {
         $cache = new None();
-        $this->assertEquals('badword_', $cache->getPrefix());
+        $this->assertEquals('badwords-php_', $cache->getPrefix());
         $this->assertNull($cache->getDefaultLifetime());
 
         $cache = new None('foobar');
