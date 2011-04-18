@@ -320,6 +320,6 @@ class Filter
      */
     protected function getDictionaryCacheKey(Dictionary $dictionary)
     {
-        return $dictionary->getId().'_regexps';
+        return $dictionary->getId().'_regexps_'.(md5(serialize($this->getConfig())));
     }
 }
