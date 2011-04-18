@@ -12,6 +12,7 @@
 namespace Badword\Filter\Config\Rule;
 
 use Badword\Filter\Config\Rule;
+use Badword\Word;
 
 /**
  * Character defines the Rule for a specific character of a Word.
@@ -244,5 +245,13 @@ class Character implements Rule
 
         $this->detectRepetition = $detectRepetition;
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function apply($data, Word $word)
+    {
+        // @TODO: Implement regular expression generation
     }
 }
