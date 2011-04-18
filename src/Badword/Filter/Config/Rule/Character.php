@@ -15,7 +15,7 @@ use Badword\Filter\Config\Rule;
 use Badword\Word;
 
 /**
- * Character defines the Rule for a specific character of a Word.
+ * Character defines the rule for a specific character of a Word.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
