@@ -19,13 +19,8 @@ use Badword\Word;
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
-class Character implements Rule
+class Character extends AbstractCharacter
 {
-    /**
-     * @var array
-     */
-    protected $alternativeCharacters;
-    
     /**
      * @var string
      */
@@ -51,114 +46,11 @@ class Character implements Rule
      */
     public function __construct($character, array $alternativeCharacters = array(), $detectRepetition = false, $canBeRepeatedFor = null)
     {
+        parent::__construct($alternativeCharacters);
+
         $this->setCharacter($character);
-        $this->setAlternativeCharacters($alternativeCharacters);
         $this->setDetectRepetition($detectRepetition);
         $this->setCanBeRepeatedFor($canBeRepeatedFor);
-    }
-
-    /**
-     * Adds an alternative character that can be present instead of the character, e.g. @ for a.
-     *
-     * @param string $alternativeCharacter
-     * 
-     * @return Character
-     */
-    public function addAlternativeCharacter($alternativeCharacter)
-    {
-        if(!$this->validateAlternativeCharacter($alternativeCharacter))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid alternative character "%s". Please provide a single string character.', $alternativeCharacter));
-        }
-
-        $alternativeCharacter = $this->cleanAlternativeCharacter($alternativeCharacter);
-
-        if(!in_array($alternativeCharacter, $this->alternativeCharacters))
-        {
-            array_push($this->alternativeCharacters, $alternativeCharacter);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Adds alternative characters that can be present instead of the character, e.g. @ for a.
-     *
-     * @param array $alternativeCharacters
-     *
-     * @return Character
-     */
-    public function addAlternativeCharacters(array $alternativeCharacters)
-    {
-        foreach($alternativeCharacters as $key => $alternativeCharacter)
-        {
-            if(!$this->validateAlternativeCharacter($alternativeCharacter))
-            {
-                throw new \InvalidArgumentException(sprintf('Invalid alternative character "%s". Please provide a single character string.', $alternativeCharacter));
-            }
-
-            $alternativeCharacters[$key] = $this->cleanAlternativeCharacter($alternativeCharacter);
-        }
-
-        $this->alternativeCharacters = array_values(array_unique(array_merge($this->alternativeCharacters, array_values($alternativeCharacters))));
-        return $this;
-    }
-
-    /**
-     * Gets the alternative characters that can be present instead of the character, e.g. @ for a.
-     *
-     * @return array
-     */
-    public function getAlternativeCharacters()
-    {
-        return $this->alternativeCharacters;
-    }
-
-    /**
-     * Sets the alternative characters that can be present instead of the character, e.g. @ for a.
-     *
-     * @param array $alternativeCharacters
-     *
-     * @return Character
-     */
-    public function setAlternativeCharacters(array $alternativeCharacters)
-    {
-        foreach($alternativeCharacters as $key => $alternativeCharacter)
-        {
-            if(!$this->validateAlternativeCharacter($alternativeCharacter))
-            {
-                throw new \InvalidArgumentException(sprintf('Invalid alternative character "%s". Please provide a single character string', $alternativeCharacter));
-            }
-
-            $alternativeCharacters[$key] = $this->cleanAlternativeCharacter($alternativeCharacter);
-        }
-
-        $this->alternativeCharacters = array_values(array_unique($alternativeCharacters));
-        return $this;
-    }
-
-    /**
-     * Validates an alternative character.
-     *
-     * @param string $alternativeCharacter
-     *
-     * @return boolean
-     */
-    protected function validateAlternativeCharacter($alternativeCharacter)
-    {
-        return is_string($alternativeCharacter) && mb_strlen(trim($alternativeCharacter)) === 1;
-    }
-
-    /**
-     * Cleans an alternative character into the correct format.
-     *
-     * @param string $alternativeCharacter
-     *
-     * @return string
-     */
-    protected function cleanAlternativeCharacter($alternativeCharacter)
-    {
-        return mb_strtolower(trim($alternativeCharacter));
     }
 
     /**
