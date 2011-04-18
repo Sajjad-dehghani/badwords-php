@@ -37,6 +37,20 @@ class Config
     protected $postRules = array();
 
     /**
+     * Constructs a new Config.
+     * 
+     * @param array $rules The Rules.
+     * @param array $preRules The "pre" Rules (executed before the standard Rules).
+     * @param array $postRules The "post" Rules (executed after the standard Rules).
+     */
+    public function __construct(array $rules = array(), array $preRules = array(), array $postRules = array())
+    {
+        $this->setRules($rules);
+        $this->setPreRules($preRules);
+        $this->setPostRules($postRules);
+    }
+
+    /**
      * Adds a Rule.
      * 
      * @param Rule $rule
