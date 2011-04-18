@@ -73,6 +73,8 @@ class Config
      * @param array $rules
      *
      * @return Config
+     *
+     * @throws \InvalidArgumentException When a rule is invalid.
      */
     public function addRules(array $rules)
     {
@@ -80,7 +82,7 @@ class Config
         {
             if(!($rule instanceof Rule))
             {
-                throw new InvalidArgumentException('Invalid rule. Expected instance of \Badword\Filter\Config\Rule.');
+                throw new \InvalidArgumentException('Invalid rule. Expected instance of \Badword\Filter\Config\Rule.');
             }
         }
 
@@ -108,6 +110,8 @@ class Config
      * @param array $rules
      *
      * @return Config
+     *
+     * @throws \InvalidArgumentException When a rule is invalid.
      */
     public function setRules(array $rules)
     {
@@ -115,7 +119,7 @@ class Config
         {
             if(!($rule instanceof Rule))
             {
-                throw new InvalidArgumentException('Invalid rule. Expected instance of \Badword\Filter\Config\Rule.');
+                throw new \InvalidArgumentException('Invalid rule. Expected instance of \Badword\Filter\Config\Rule.');
             }
         }
 
@@ -152,6 +156,8 @@ class Config
      * @param array $rules
      *
      * @return Config
+     *
+     * @throws \InvalidArgumentException When a "pre" rule is invalid.
      */
     public function addPreRules(array $rules)
     {
@@ -159,7 +165,7 @@ class Config
         {
             if(!($rule instanceof Rule))
             {
-                throw new InvalidArgumentException('Invalid "pre" rule. Expected instance of \Badword\Filter\Config\Rule.');
+                throw new \InvalidArgumentException('Invalid "pre" rule. Expected instance of \Badword\Filter\Config\Rule.');
             }
         }
 
@@ -187,6 +193,8 @@ class Config
      * @param array $rules
      *
      * @return Config
+     *
+     * @throws \InvalidArgumentException When a "pre" rule is invalid.
      */
     public function setPreRules(array $rules)
     {
@@ -194,7 +202,7 @@ class Config
         {
             if(!($rule instanceof Rule))
             {
-                throw new InvalidArgumentException('Invalid "pre" rule. Expected instance of \Badword\Filter\Config\Rule.');
+                throw new \InvalidArgumentException('Invalid "pre" rule. Expected instance of \Badword\Filter\Config\Rule.');
             }
         }
 
@@ -231,6 +239,8 @@ class Config
      * @param array $rules
      *
      * @return Config
+     *
+     * @throws \InvalidArgumentException When a "post" rule is invalid.
      */
     public function addPostRules(array $rules)
     {
@@ -238,7 +248,7 @@ class Config
         {
             if(!($rule instanceof Rule))
             {
-                throw new InvalidArgumentException('Invalid "post" rule. Expected instance of \Badword\Filter\Config\Rule.');
+                throw new \InvalidArgumentException('Invalid "post" rule. Expected instance of \Badword\Filter\Config\Rule.');
             }
         }
 
@@ -266,6 +276,8 @@ class Config
      * @param array $rules
      *
      * @return Config
+     *
+     * @throws \InvalidArgumentException When a "post" rule is invalid.
      */
     public function setPostRules(array $rules)
     {
@@ -273,7 +285,7 @@ class Config
         {
             if(!($rule instanceof Rule))
             {
-                throw new InvalidArgumentException('Invalid "post" rule. Expected instance of \Badword\Filter\Config\Rule.');
+                throw new \InvalidArgumentException('Invalid "post" rule. Expected instance of \Badword\Filter\Config\Rule.');
             }
         }
 

@@ -33,19 +33,20 @@ class Filter
     protected $config;
 
     /**
-     * @var Dictionary
+     * @var array
      */
-    protected $dictionary;
+    protected $dictionaries = array();
 
     /**
      * Constructs a new Filter.
      * 
-     * @param Dictionary $dictionary The Dictionary of bad words.
+     * @param array $dictionaries The Dictionaries of bad words to filter against.
      * @param Config $config The Config used during execution.
+     * @param Cache $cache The caching mechanism to use.
      */
-    public function __construct(Dictionary $dictionary, Config $config, Cache $cache = null)
+    public function __construct(array $dictionaries, Config $config, Cache $cache = null)
     {
-        $this->setDictionary($dictionary);
+        $this->setDictionaries($dictionaries);
         $this->setConfig($config);
         $this->setCache($cache ?: new None());
     }
@@ -97,25 +98,85 @@ class Filter
     }
 
     /**
-     * Gets the Dictionary of bad words.
+     * Adds a Dictionary of bad words to filter against.
      *
-     * @return Dictionary
+     * @param Dictionary $dictionary
+     *
+     * @return Filter
      */
-    public function getDictionary()
+    public function addDictionary(Dictionary $dictionary)
     {
-        return $this->dictionary;
+        if(!in_array($dictionary, $this->getDictionaries()))
+        {
+            array_push($this->dictionaries, $dictionary);
+        }
+
+        return $this;
     }
 
     /**
-     * Sets the Dictionary of bad words.
+     * Adds Dictionaries of bad words to filter against.
      *
-     * @param Dictionary $dictionary
-     * 
+     * @param array $dictionaries
+     *
      * @return Filter
+     *
+     * @throws \InvalidArgumentException When a dictionary is invalid.
      */
-    public function setDictionary(Dictionary $dictionary)
+    public function addDictionaries(array $dictionaries)
     {
-        $this->dictionary = $dictionary;
+        foreach($dictionaries as $dictionary)
+        {
+            if(!($dictionary instanceof Dictionary))
+            {
+                throw new \InvalidArgumentException('Invalid dictionary. Expected instance of \Badword\Filter\Config\Dictionary.');
+            }
+        }
+
+        foreach($dictionaries as $dictionary)
+        {
+            $this->addDictionary($dictionary);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Gets the Dictionaries of bad words to filter against.
+     *
+     * @return array
+     */
+    public function getDictionaries()
+    {
+        return $this->dictionaries;
+    }
+
+    /**
+     * Sets the Dictionaries of bad words to filter against.
+     *
+     * @param array $dictionaries
+     *
+     * @return Filter
+     *
+     * @throws \InvalidArgumentException When a dictionary is invalid.
+     */
+    public function setDictionaries(array $dictionaries)
+    {
+        foreach($dictionaries as $dictionary)
+        {
+            if(!($dictionary instanceof Dictionary))
+            {
+                throw new \InvalidArgumentException('Invalid dictionary. Expected instance of \Badword\Filter\Config\Dictionary.');
+            }
+        }
+
+        $this->dictionaries = array();
+
+        foreach($dictionaries as $dictionary)
+        {
+            $this->addDictionary($dictionary);
+        }
+
         return $this;
     }
 }
