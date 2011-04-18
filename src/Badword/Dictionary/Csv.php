@@ -34,7 +34,7 @@ class Csv extends AbstractFile
     protected function loadWordsDataFromSource()
     {
         $handle = fopen($this->getPath(), 'r');
-        if ($handle === false)
+        if($handle === false)
         {
             // @codeCoverageIgnoreStart
             throw new Exception('Error. CSV file not could be opened.');
@@ -76,16 +76,16 @@ class Csv extends AbstractFile
     {
         $wordData = array_values($wordData);
 
-        if (!(isset($wordData[0]) && is_string($wordData[0]) && mb_strlen(trim($wordData[0])) > 0))
+        if(!(isset($wordData[0]) && is_string($wordData[0]) && mb_strlen(trim($wordData[0])) > 0))
         {
             throw new Exception(sprintf('Expected word in column 1 to be non-empty string.'));
         }
 
         $allowedBooleanValues = array(true, false, 1, 0, '1', '0');
 
-        if (isset($wordData[1]))
+        if(isset($wordData[1]))
         {
-            if (!in_array($wordData[1], $allowedBooleanValues, true))
+            if(!in_array($wordData[1], $allowedBooleanValues, true))
             {
                 throw new Exception(sprintf('Expected must start word "%s" in column 2 to be either 1, 0, or to be omitted.', $wordData[1]));
             }
@@ -95,9 +95,9 @@ class Csv extends AbstractFile
             }
         }
 
-        if (isset($wordData[2]))
+        if(isset($wordData[2]))
         {
-            if (!in_array($wordData[2], $allowedBooleanValues, true))
+            if(!in_array($wordData[2], $allowedBooleanValues, true))
             {
                 throw new Exception(sprintf('Expected must end word "%s" in column 2 to be either 1, 0, or to be omitted.', $wordData[2]));
             }

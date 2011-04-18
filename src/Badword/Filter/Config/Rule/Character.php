@@ -66,12 +66,12 @@ class Character implements Rule
      */
     public function addAlternativeCharacter($alternativeCharacter)
     {
-        if (!$this->validateAlternativeCharacter($character))
+        if(!$this->validateAlternativeCharacter($character))
         {
             throw new \InvalidArgumentException(sprintf('Invalid alternative character "%s". Please provide a single string character.', $alternativeCharacter));
         }
 
-        if (!in_array($alternativeCharacter, $this->alternativeCharacters))
+        if(!in_array($alternativeCharacter, $this->alternativeCharacters))
         {
             array_push($this->alternativeCharacters, $this->cleanAlternativeCharacter($alternativeCharacter));
         }
@@ -90,7 +90,7 @@ class Character implements Rule
     {
         foreach($alternativeCharacters as $key => $alternativeCharacter)
         {
-            if (!$this->validateAlternativeCharacter($alternativeCharacter))
+            if(!$this->validateAlternativeCharacter($alternativeCharacter))
             {
                 throw new \InvalidArgumentException(sprintf('Invalid alternative character "%s". Please provide a single string character.', $alternativeCharacter));
             }
@@ -123,7 +123,7 @@ class Character implements Rule
     {
         foreach($alternativeCharacters as $key => $alternativeCharacter)
         {
-            if (!$this->validateAlternativeCharacter($alternativeCharacter))
+            if(!$this->validateAlternativeCharacter($alternativeCharacter))
             {
                 throw new \InvalidArgumentException(sprintf('Invalid alternative character "%s". Please provide a single string character.', $alternativeCharacter));
             }
@@ -180,7 +180,7 @@ class Character implements Rule
      */
     public function setCharacter($character)
     {
-        if (!(mb_strlen($character) === 1))
+        if(!(mb_strlen($character) === 1))
         {
             throw new \InvalidArgumentException(sprintf('Invalid character "%s". Please provide a single character string.', $character));
         }
@@ -210,7 +210,7 @@ class Character implements Rule
      */
     public function setCanBeRepeatedFor($canBeRepeatedFor = null)
     {
-        if (!($canBeRepeatedFor === null || ((is_int($canBeRepeatedFor) || ctype_digit($canBeRepeatedFor)) && $canBeRepeatedFor > 0)))
+        if(!($canBeRepeatedFor === null || ((is_int($canBeRepeatedFor) || ctype_digit($canBeRepeatedFor)) && $canBeRepeatedFor > 0)))
         {
             throw new \InvalidArgumentException(sprintf('Invalid can be repeated for value "%s". Please provide an integer greater than 0 or null.', $canBeRepeatedFor));
         }
@@ -238,7 +238,7 @@ class Character implements Rule
      */
     public function setDetectRepetition($detectRepetition)
     {
-        if (!is_bool($detectRepetition))
+        if(!is_bool($detectRepetition))
         {
             throw new \InvalidArgumentException(sprintf('Invalid detect repetition value "%s". Please provide a boolean.', $detectRepetition));
         }

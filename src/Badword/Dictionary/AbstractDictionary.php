@@ -95,7 +95,7 @@ abstract class AbstractDictionary implements Dictionary
      */
     public function setMustEndWordDefault($mustEndWordDefault = false)
     {
-        if (!is_bool($mustEndWordDefault))
+        if(!is_bool($mustEndWordDefault))
         {
             throw new \InvalidArgumentException(sprintf('Invalid "must end word" default "%s". Expected boolean.', $mustEndWordDefault));
         }
@@ -123,7 +123,7 @@ abstract class AbstractDictionary implements Dictionary
      */
     public function setMustStartWordDefault($mustStartWordDefault = false)
     {
-        if (!is_bool($mustStartWordDefault))
+        if(!is_bool($mustStartWordDefault))
         {
             throw new \InvalidArgumentException(sprintf('Invalid "must start word" default "%s". Expected boolean.', $mustStartWordDefault));
         }
@@ -137,7 +137,7 @@ abstract class AbstractDictionary implements Dictionary
      */
     public function getWords()
     {
-        if ($this->words === null)
+        if($this->words === null)
         {
             $this->words = $this->loadWords();
         }
@@ -154,18 +154,18 @@ abstract class AbstractDictionary implements Dictionary
     {
         $fromCache = true;
         $wordsData = $this->loadWordsDataFromCache();
-        if (!$wordsData)
+        if(!$wordsData)
         {
             $fromCache = false;
             $wordsData = $this->loadWordsDataFromSource();
         }
 
-        if (!(is_array($wordsData) && count($wordsData) > 0))
+        if(!(is_array($wordsData) && count($wordsData) > 0))
         {
             throw new Exception('Words could not be loaded. Load failed or source was empty.');
         }
 
-        if (!$fromCache)
+        if(!$fromCache)
         {
             $this->saveWordsDataToCache($wordsData);
         }
@@ -174,7 +174,7 @@ abstract class AbstractDictionary implements Dictionary
         foreach($wordsData as $wordData)
         {
             $word = $this->convertWordDataToObject($wordData);
-            if (!in_array($word, $words))
+            if(!in_array($word, $words))
             {
                 array_push($words, $word);
             }

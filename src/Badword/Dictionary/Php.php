@@ -39,7 +39,7 @@ class Php extends AbstractFile
             require($path);
             ob_end_clean();
 
-            if (!(isset($words) && is_array($words)))
+            if(!(isset($words) && is_array($words)))
             {
                 throw new Exception('"$words" variable could not be found or is not an array in the PHP file.');
             }
@@ -78,29 +78,29 @@ class Php extends AbstractFile
      */
     protected function validateAndCleanWordData($wordData)
     {
-        if (is_string($wordData))
+        if(is_string($wordData))
         {
             $wordData = array($wordData);
         }
 
-        if (!is_array($wordData))
+        if(!is_array($wordData))
         {
             throw new Exception('Expected word data be an array or string.');
         }
 
         $wordData = array_values($wordData);
 
-        if (!(isset($wordData[0]) && is_string($wordData[0]) && mb_strlen(trim($wordData[0])) > 0))
+        if(!(isset($wordData[0]) && is_string($wordData[0]) && mb_strlen(trim($wordData[0])) > 0))
         {
             throw new Exception('Expected first value "word" to be non-empty string.');
         }
 
-        if (isset($wordData[1]) && !is_bool($wordData[1]))
+        if(isset($wordData[1]) && !is_bool($wordData[1]))
         {
             throw new Exception('Expected second value "must start word" to be a boolean or omitted.');
         }
 
-        if (isset($wordData[2]) && !is_bool($wordData[2]))
+        if(isset($wordData[2]) && !is_bool($wordData[2]))
         {
             throw new Exception('Expected third value "must end word" to be a boolean or omitted.');
         }

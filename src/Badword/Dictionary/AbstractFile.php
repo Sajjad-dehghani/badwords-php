@@ -60,14 +60,14 @@ abstract class AbstractFile extends AbstractDictionary
      */
     public function setPath($path)
     {
-        if (!(is_string($path) && mb_strlen(trim($path)) > 0))
+        if(!(is_string($path) && mb_strlen(trim($path)) > 0))
         {
             throw new \InvalidArgumentException(sprintf('Invalid path "%s". Expected path to a valid source file.', $path));
         }
 
         $path = trim($path);
 
-        if (!(is_readable($path) && !is_dir($path)))
+        if(!(is_readable($path) && !is_dir($path)))
         {
             throw new \InvalidArgumentException(sprintf('Invalid path "%s". The specified path is either invalid, can not be found, or can not be read.', $path));
         }

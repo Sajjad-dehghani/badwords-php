@@ -45,7 +45,7 @@ class Config
      */
     public function addRule(Rule $rule)
     {
-        if (!in_array($rule, $this->getRules()))
+        if(!in_array($rule, $this->getRules()))
         {
             array_push($this->rules, $rule);
         }
@@ -64,7 +64,7 @@ class Config
     {
         foreach($rules as $rule)
         {
-            if (!($rule instanceof Rule))
+            if(!($rule instanceof Rule))
             {
                 throw new InvalidArgumentException('Invalid rule. Expected instance of \Badword\Filter\Config\Rule.');
             }
@@ -99,7 +99,7 @@ class Config
     {
         foreach($rules as $rule)
         {
-            if (!($rule instanceof Rule))
+            if(!($rule instanceof Rule))
             {
                 throw new InvalidArgumentException('Invalid rule. Expected instance of \Badword\Filter\Config\Rule.');
             }
@@ -124,7 +124,7 @@ class Config
      */
     public function addPreRule(Rule $rule)
     {
-        if (!in_array($rule, $this->getPreRules()))
+        if(!in_array($rule, $this->getPreRules()))
         {
             array_push($this->preRules, $rule);
         }
@@ -143,7 +143,7 @@ class Config
     {
         foreach($rules as $rule)
         {
-            if (!($rule instanceof Rule))
+            if(!($rule instanceof Rule))
             {
                 throw new InvalidArgumentException('Invalid "pre" rule. Expected instance of \Badword\Filter\Config\Rule.');
             }
@@ -178,7 +178,7 @@ class Config
     {
         foreach($rules as $rule)
         {
-            if (!($rule instanceof Rule))
+            if(!($rule instanceof Rule))
             {
                 throw new InvalidArgumentException('Invalid "pre" rule. Expected instance of \Badword\Filter\Config\Rule.');
             }
@@ -203,7 +203,7 @@ class Config
      */
     public function addPostRule(Rule $rule)
     {
-        if (!in_array($rule, $this->getPostRules()))
+        if(!in_array($rule, $this->getPostRules()))
         {
             array_push($this->postRules, $rule);
         }
@@ -222,7 +222,7 @@ class Config
     {
         foreach($rules as $rule)
         {
-            if (!($rule instanceof Rule))
+            if(!($rule instanceof Rule))
             {
                 throw new InvalidArgumentException('Invalid "post" rule. Expected instance of \Badword\Filter\Config\Rule.');
             }
@@ -257,7 +257,7 @@ class Config
     {
         foreach($rules as $rule)
         {
-            if (!($rule instanceof Rule))
+            if(!($rule instanceof Rule))
             {
                 throw new InvalidArgumentException('Invalid "post" rule. Expected instance of \Badword\Filter\Config\Rule.');
             }
