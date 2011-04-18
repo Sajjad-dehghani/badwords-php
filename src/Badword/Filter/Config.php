@@ -308,14 +308,14 @@ class Config
      */
     public function apply(Word $word)
     {
-        $data = $word->getWord();
+        $regExp = addslashes($word->getWord());
         $rules = array_merge($this->getPreRules(), $this->getRules(), $this->getPostRules());
 
         foreach($rules as $rule)
         {
-            $data = $rule->apply($data, $word);
+            $regExp = $rule->apply($regExp, $word);
         }
 
-        return $data;
+        return $regExp;
     }
 }

@@ -94,7 +94,7 @@ class Character implements Rule
         {
             if(!$this->validateAlternativeCharacter($alternativeCharacter))
             {
-                throw new \InvalidArgumentException(sprintf('Invalid alternative character "%s". Please provide a single string character.', $alternativeCharacter));
+                throw new \InvalidArgumentException(sprintf('Invalid alternative character "%s". Please provide a single character string.', $alternativeCharacter));
             }
 
             $alternativeCharacters[$key] = $this->cleanAlternativeCharacter($alternativeCharacter);
@@ -127,7 +127,7 @@ class Character implements Rule
         {
             if(!$this->validateAlternativeCharacter($alternativeCharacter))
             {
-                throw new \InvalidArgumentException(sprintf('Invalid alternative character "%s". Please provide a single string character.', $alternativeCharacter));
+                throw new \InvalidArgumentException(sprintf('Invalid alternative character "%s". Please provide a single character string', $alternativeCharacter));
             }
 
             $alternativeCharacters[$key] = $this->cleanAlternativeCharacter($alternativeCharacter);
@@ -252,8 +252,39 @@ class Character implements Rule
     /**
      * {@inheritdoc}
      */
-    public function apply($data, Word $word)
+    public function apply($regExp, Word $word)
     {
-        return $data;
+        // If the letter can be repeated X number of times legally
+        if($this->getCanBeRepeatedFor() !== null)
+        {
+            // Add repetition detection and set the minimum number required to X
+            $regExp = preg_replace(
+                sprintf('/%s{%s,}/iu', $this->getCharacter(), $this->getCanBeRepeatedFor()),
+                sprintf('%s{%s,}', $this->getCharacter(), $this->getCanBeRepeatedFor()),
+                $regExp
+            );
+        }
+
+        // If we need to detect this letter being repeated
+        if($this->detectRepetition)
+        {
+            // Add repetition detection
+            $regExp = preg_replace(
+                sprintf('/%s([^\{]|$)/iu', $this->getCharacter()),
+                sprintf('%s+$1', $this->getCharacter()),
+                $regExp
+            );
+        }
+
+        // If there are alternative characters that could be used in place of this character
+        if($this->getAlternativeCharacters())
+        {
+            // Add detection for them
+            $alternativeCharacters = array_merge(array($this->getCharacter()), $this->getAlternativeCharacters());
+            $alternativeCharacters = preg_replace('/(\*|\?|\$|\^)/iu', '\\\$1', implode('|', $alternativeCharacters));
+            $regExp = preg_replace(sprintf('/%s/ui', $this->getCharacter()), '('.$alternativeCharacters.')', $regExp);
+        }
+
+        return $regExp;
     }
 }

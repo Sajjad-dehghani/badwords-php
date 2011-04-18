@@ -23,10 +23,10 @@ interface Rule
     /**
      * Applies the Rule to the data using the provided Word.
      *
-     * @param string $data
+     * @param string $regExp
      * @param Word $word
      *
-     * @return string The processed $data.
+     * @return string The generated $regExp.
      */
-    public function apply($data, Word $word);
+    public function apply($regExp, Word $word);
 }
