@@ -75,7 +75,7 @@ abstract class AbstractFile extends AbstractDictionary
         $path = realpath($path);
         if($path !== $this->getPath())
         {
-            $this->words = null;
+            $this->clearWords();
         }
 
         $this->path = $path;

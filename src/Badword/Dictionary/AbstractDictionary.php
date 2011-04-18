@@ -72,11 +72,6 @@ abstract class AbstractDictionary implements Dictionary
      */
     public function setCache(Cache $cache)
     {
-        if($cache !== $this->getCache())
-        {
-            $this->words = null;
-        }
-
         $this->cache = $cache;
         return $this;
     }
@@ -103,6 +98,11 @@ abstract class AbstractDictionary implements Dictionary
         if(!is_bool($mustEndWordDefault))
         {
             throw new \InvalidArgumentException(sprintf('Invalid "must end word" default "%s". Expected boolean.', $mustEndWordDefault));
+        }
+
+        if($mustEndWordDefault !== $this->getMustEndWordDefault())
+        {
+            $this->clearWords();
         }
 
         $this->mustEndWordDefault = $mustEndWordDefault;
@@ -133,6 +133,11 @@ abstract class AbstractDictionary implements Dictionary
             throw new \InvalidArgumentException(sprintf('Invalid "must start word" default "%s". Expected boolean.', $mustStartWordDefault));
         }
 
+        if($mustStartWordDefault !== $this->getMustStartWordDefault())
+        {
+            $this->clearWords();
+        }
+
         $this->mustStartWordDefault = $mustStartWordDefault;
         return $this;
     }
@@ -148,6 +153,17 @@ abstract class AbstractDictionary implements Dictionary
         }
 
         return $this->words;
+    }
+
+    /**
+     * Clears the local cache of Words.
+     *
+     * @return AbstractDictionary
+     */
+    protected function clearWords()
+    {
+        $this->words = null;
+        return $this;
     }
 
     /**
