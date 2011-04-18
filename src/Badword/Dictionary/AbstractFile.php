@@ -72,7 +72,13 @@ abstract class AbstractFile extends AbstractDictionary
             throw new \InvalidArgumentException(sprintf('Invalid path "%s". The specified path is either invalid, can not be found, or can not be read.', $path));
         }
 
-        $this->path = realpath($path);
+        $path = realpath($path);
+        if($path !== $this->getPath())
+        {
+            $this->words = null;
+        }
+
+        $this->path = $path;
         return $this;
     }
 

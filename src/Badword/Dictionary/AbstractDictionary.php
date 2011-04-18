@@ -72,6 +72,11 @@ abstract class AbstractDictionary implements Dictionary
      */
     public function setCache(Cache $cache)
     {
+        if($cache !== $this->getCache())
+        {
+            $this->words = null;
+        }
+
         $this->cache = $cache;
         return $this;
     }
