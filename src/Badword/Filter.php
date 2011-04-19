@@ -47,13 +47,13 @@ class Filter
     /**
      * Constructs a new Filter.
      * 
-     * @param array $dictionaries The Dictionaries of bad words to filter against.
+     * @param Dictionary|array $dictionaries The Dictionary or Dictionaries of bad words to filter against.
      * @param Config $config The Config used during execution.
      * @param Cache $cache The caching mechanism to use.
      */
-    public function __construct(array $dictionaries, Config $config, Cache $cache = null)
+    public function __construct($dictionaries, Config $config, Cache $cache = null)
     {
-        $this->setDictionaries($dictionaries);
+        $this->setDictionaries(!is_array($dictionaries) ? array($dictionaries) : $dictionaries);
         $this->setConfig($config);
         $this->setCache($cache ?: new None());
     }
