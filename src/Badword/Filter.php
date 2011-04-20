@@ -42,7 +42,7 @@ class Filter
     /**
      * @var array
      */
-    protected $regExps;
+    protected $regExps = array();
 
     /**
      * Constructs a new Filter.
@@ -195,47 +195,61 @@ class Filter
     }
 
     /**
-     * Gets the regular expressions for the Dictionaries.
-     * 
-     * @return array
-     */
-    public function getRegExps()
-    {
-        if($this->regExps === null)
-        {
-            $this->regExps = array();
-            
-            foreach($this->getDictionaries() as $dictionary)
-            {
-                $fromCache = true;
-                $regExps = $this->loadDictionaryRegExpsFromCache($dictionary);
-                if(!$regExps)
-                {
-                    $fromCache = false;
-                    $regExps = $this->generateDictionaryRegExps($dictionary);
-                }
-
-                if(!$fromCache)
-                {
-                    $this->saveDictionaryRegExpsToCache($dictionary, $regExps);
-                }
-
-                array_push($this->regExps, $regExps);
-            }
-        }
-
-        return $this->regExps;
-    }
-
-    /**
      * Clears the local cache of regular expressions.
-     * 
-     * @return Filter 
+     *
+     * @return Filter
      */
     protected function clearRegExps()
     {
-        $this->regExps = null;
+        $this->regExps = array();
         return $this;
+    }
+
+    /**
+     * Gets the regular expressions for the Dictionary.
+     *
+     * @param Dictionary $dictionary
+     * 
+     * @return array
+     */
+    protected function getDictionaryRegExps(Dictionary $dictionary)
+    {
+        if(!isset($this->regExps[$dictionary->getId()]))
+        {
+            $this->regExps[$dictionary->getId()] = $this->loadOrGenerateDictionaryRegExps($dictionary);
+        }
+
+        return $this->regExps[$dictionary->getId()];
+    }
+
+    /**
+     * Loads from the cache or generates the Dictionary regular expressions.
+     * 
+     * @param Dictionary $dictionary
+     * 
+     * @return array
+     */
+    protected function loadOrGenerateDictionaryRegExps(Dictionary $dictionary)
+    {
+        $fromCache = true;
+        $regExps = $this->loadDictionaryRegExpsFromCache($dictionary);
+        if(!$regExps)
+        {
+            $fromCache = false;
+            $regExps = $this->generateDictionaryRegExps($dictionary);
+        }
+
+        if(!(is_array($regExps)))
+        {
+            throw new Exception(sprintf('Error while loading or generating regular expressions for Dictionary with ID "%s".', $dictionary->getId()));
+        }
+
+        if(!$fromCache)
+        {
+            $this->saveDictionaryRegExpsToCache($dictionary, $regExps);
+        }
+
+        return $regExps;
     }
 
     /**
@@ -248,7 +262,7 @@ class Filter
     protected function loadDictionaryRegExpsFromCache(Dictionary $dictionary)
     {
         $cache = $this->getCache();
-        $cacheKey = $this->getDictionaryCacheKey($dictionary);
+        $cacheKey = $this->getDictionaryRegExpsCacheKey($dictionary);
         return $cache->has($cacheKey) ? $cache->get($cacheKey) : null;
     }
 
@@ -308,7 +322,7 @@ class Filter
      */
     protected function saveDictionaryRegExpsToCache(Dictionary $dictionary, array $regExps)
     {
-        return $this->getCache()->set($this->getDictionaryCacheKey($dictionary), $regExps);
+        return $this->getCache()->set($this->getDictionaryRegExpsCacheKey($dictionary), $regExps);
     }
 
     /**
@@ -318,7 +332,7 @@ class Filter
      *
      * @return string
      */
-    protected function getDictionaryCacheKey(Dictionary $dictionary)
+    protected function getDictionaryRegExpsCacheKey(Dictionary $dictionary)
     {
         return $dictionary->getId().'_regexps_'.(md5(serialize($this->getConfig())));
     }

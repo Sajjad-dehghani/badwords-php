@@ -143,6 +143,17 @@ abstract class AbstractDictionary implements Dictionary
     }
 
     /**
+     * Clears the local cache of Words.
+     *
+     * @return AbstractDictionary
+     */
+    protected function clearWords()
+    {
+        $this->words = null;
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getWords()
@@ -153,17 +164,6 @@ abstract class AbstractDictionary implements Dictionary
         }
 
         return $this->words;
-    }
-
-    /**
-     * Clears the local cache of Words.
-     *
-     * @return AbstractDictionary
-     */
-    protected function clearWords()
-    {
-        $this->words = null;
-        return $this;
     }
 
     /**
