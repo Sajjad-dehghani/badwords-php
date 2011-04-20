@@ -14,6 +14,7 @@ namespace Badword;
 use Badword\Cache;
 use Badword\Cache\None;
 use Badword\Filter\Config;
+use Badword\Filter\Result;
 
 /**
  * Filter detects bad words in content.
@@ -206,6 +207,63 @@ class Filter
     }
 
     /**
+     * Filters some content for bad words and returns a Result.
+     *
+     * @param string $content
+     *
+     * @return Result
+     *
+     * @throws \InvalidArgumentException When the content is invalid.
+     */
+    public function filter($content)
+    {
+        if(!(is_string($content) && strlen(trim($content)) > 0))
+        {
+            throw new \InvalidArgumentException('Invalid content. Please provide a non-empty string.');
+        }
+
+        return new Result($content, $this->filterString($content));
+    }
+
+    /**
+     * Filters a single string for bad words and returns any suspected matches found.
+     *
+     * @param string $string
+     *
+     * @return array
+     */
+    protected function filterString($string)
+    {
+        $matches = array();
+
+        // For each Dictionary
+        foreach($this->getDictionaries() as $dictionary)
+        {
+            $dictionaryMatches = array();
+
+            // Get the regular expressions
+            $regExps = $this->getDictionaryRegExps($dictionary);
+
+            // Run the string through each RegEx and store any matches
+            foreach($regExps as $regExp)
+            {
+                if(preg_match_all('/'.$regExp.'/iu', $string, $regExpMatches))
+                {
+                    $dictionaryMatches = array_merge($dictionaryMatches, $regExpMatches[0]);
+                }
+            }
+
+            // If matches were found, store them against the Dictionary ID
+            if($dictionaryMatches)
+            {
+                $matches[$dictionary->getId()] = array_values(array_unique($dictionaryMatches));
+            }
+        }
+
+        return $matches;
+    }
+
+    /**
      * Gets the regular expressions for the Dictionary.
      *
      * @param Dictionary $dictionary
@@ -223,7 +281,7 @@ class Filter
     }
 
     /**
-     * Loads from the cache or generates the Dictionary regular expressions.
+     * Loads the the Dictionary regular expressions from the cache or generates them.
      * 
      * @param Dictionary $dictionary
      * 
@@ -267,7 +325,7 @@ class Filter
     }
 
     /**
-     * Generates the regular expressions for a Dictionary using the Config.
+     * Generates the regular expressions for a Dictionary using the set Config.
      *
      * @param Dictionary $dictionary
      *
