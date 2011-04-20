@@ -67,6 +67,8 @@ class AbstractCharacterTest extends \PHPUnit_Framework_TestCase
         }
         catch(\InvalidArgumentException $e) {}
 
+        $this->assertEquals(array('a'), $this->ruleStub->getAlternativeCharacters());
+
         $this->ruleStub->addAlternativeCharacters(array('a', 'b', 'c'));
         $this->assertEquals(array('a', 'b', 'c'), $this->ruleStub->getAlternativeCharacters());
 
@@ -85,6 +87,8 @@ class AbstractCharacterTest extends \PHPUnit_Framework_TestCase
             $this->fail('Expected \InvalidArgumentException not thrown.');
         }
         catch(\InvalidArgumentException $e) {}
+
+        $this->assertEquals(array('a', 'b', 'c', 'd', 'e', 'g', 'f'), $this->ruleStub->getAlternativeCharacters());
 
         $this->ruleStub->setAlternativeCharacters(array('x', 'Y', 'z', 'Z'));
         $this->assertEquals(array('x', 'y', 'z'), $this->ruleStub->getAlternativeCharacters());
