@@ -41,16 +41,14 @@ class Character extends AbstractCharacter
      * 
      * @param string $character The character this config applies to.
      * @param array $alternativeCharacters The alternative characters that can be present instead of the character, e.g. @ for a.
-     * @param boolean $detectRepetition Whether character repetition should be detected or not, e.g. detect aaaaaaa for a.
-     * @param integer $canBeRepeatedFor Whether the character can be repeated for X number of times, e.g. s can be repeated 2 times in some words, i.e. bass.
+     * @param boolean $detectRepetition Whether character repetition should be detected or not, and the minimum number of consecutive occurrences before detection can be applied.
      */
-    public function __construct($character, array $alternativeCharacters = array(), $detectRepetition = false, $canBeRepeatedFor = null)
+    public function __construct($character, array $alternativeCharacters = array(), $detectRepetition = false)
     {
         parent::__construct($alternativeCharacters);
 
         $this->setCharacter($character);
         $this->setDetectRepetition($detectRepetition);
-        $this->setCanBeRepeatedFor($canBeRepeatedFor);
     }
 
     /**
@@ -84,39 +82,11 @@ class Character extends AbstractCharacter
     }
 
     /**
-     * Gets whether the character can be repeated for X number of times,
-     * e.g. s can be repeated 2 times in some words, i.e. bass.
-     *
-     * @return integer
-     */
-    public function getCanBeRepeatedFor()
-    {
-        return $this->canBeRepeatedFor;
-    }
-
-    /**
-     * Gets whether the character can be repeated for X number of times,
-     * e.g. s can be repeated 2 times in some words, i.e. bass.
-     *
-     * @param integer $canBeRepeatedFor
+     * Gets whether character repetition should be detected or not, e.g. detect "aaaaa" for "a",
+     * and the minimum number of consecutive occurrences before detection can be applied,
+     * e.g. for "s" and "2", detection would be applied to "bass" but not "base".
      * 
-     * @return Character
-     */
-    public function setCanBeRepeatedFor($canBeRepeatedFor = null)
-    {
-        if(!($canBeRepeatedFor === null || (is_int($canBeRepeatedFor) && $canBeRepeatedFor > 0)))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid can be repeated for value "%s". Please provide an integer greater than 0 or null.', $canBeRepeatedFor));
-        }
-
-        $this->canBeRepeatedFor = $canBeRepeatedFor ?: null;
-        return $this;
-    }
-
-    /**
-     * Gets whether character repetition should be detected or not, e.g. detect aaaaaaa for a.
-     * 
-     * @return boolean
+     * @return boolean|integer
      */
     public function getDetectRepetition()
     {
@@ -124,20 +94,24 @@ class Character extends AbstractCharacter
     }
 
     /**
-     * Sets whether character repetition should be detected or not, e.g. detect aaaaaaa for a.
+     * Sets whether character repetition should be detected or not, e.g. detect "aaaaa" for "a",
+     * and the minimum number of consecutive occurrences before detection can be applied,
+     * e.g. for "s" and "2", detection would be applied to "bass" but not "base".
      *
-     * @param boolean $detectRepetition
+     * @param boolean|integer $minimumRequired
      *
      * @return Character
      */
-    public function setDetectRepetition($detectRepetition)
+    public function setDetectRepetition($minimumRequired)
     {
-        if(!is_bool($detectRepetition))
+        if(!(is_bool($minimumRequired)) && !(is_int($minimumRequired) && $minimumRequired > 0))
         {
-            throw new \InvalidArgumentException(sprintf('Invalid detect repetition value "%s". Please provide a boolean.', $detectRepetition));
+            throw new \InvalidArgumentException(sprintf('Invalid detect repetition minimum consecutive occurrences value "%s". Please provide a boolean or integer greater than 0.', $minimumRequired));
         }
 
-        $this->detectRepetition = $detectRepetition;
+        $minimumRequired = (int) $minimumRequired;
+        
+        $this->detectRepetition = $minimumRequired ?: false;
         return $this;
     }
 
@@ -146,26 +120,33 @@ class Character extends AbstractCharacter
      */
     public function apply($regExp, Word $word)
     {
-        // If the letter can be repeated X number of times legally
-        if($this->getCanBeRepeatedFor() !== null)
+        // If we need to detect this character being repeated
+        if($this->getDetectRepetition())
         {
-            // Add repetition detection and set the minimum number required to X
-            $regExp = preg_replace(
-                sprintf('/%s{%s,}/iu', $this->getCharacter(), $this->getCanBeRepeatedFor()),
-                sprintf('%s{%s,}', $this->getCharacter(), $this->getCanBeRepeatedFor()),
-                $regExp
-            );
+            // For each reasonably possible combination of consecutive occurrences greater than the minimum allowed
+            for($i = 4; $i >= $this->getDetectRepetition(); $i--)
+            {
+                if($i !== 1)
+                {
+                    // Add repetition detection and set the minimum number required to $i
+                    $regExp = preg_replace(
+                        sprintf('/%s{%s,}/iu', $this->getCharacter(), $i),
+                        sprintf('%s{%s,}', $this->getCharacter(), $i),
+                        $regExp
+                    );
+                }
+                else
+                {
+                    // Add repetition detection for a single character occurrence, only where previous detection hasn't been enforced
+                    $regExp = preg_replace(sprintf('/(%s)([^{+]|$)/iu', $this->getCharacter()), '$1+$2', $regExp);
+                }
+            }
         }
 
-        // If we need to detect this letter being repeated
-        if($this->detectRepetition)
+        // Clean up any consecutive occurrences left over
+        for($i = 4; $i >= 2; $i--)
         {
-            // Add repetition detection
-            $regExp = preg_replace(
-                sprintf('/%s([^\{]|$)/iu', $this->getCharacter()),
-                sprintf('%s+$1', $this->getCharacter()),
-                $regExp
-            );
+            $regExp = preg_replace(sprintf('/(%s){%s}/iu', $this->getCharacter(), $i), sprintf('$1{%s}', $i), $regExp);
         }
 
         // If there are alternative characters that could be used in place of this character

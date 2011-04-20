@@ -285,7 +285,7 @@ class Filter
                 $regExps[$index] = array();
             }
 
-            // Stor
+            // Store
             array_push($regExps[$index], $wordRegExp);
         }
 

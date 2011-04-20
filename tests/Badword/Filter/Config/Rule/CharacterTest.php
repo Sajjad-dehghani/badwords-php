@@ -11,16 +11,18 @@
 
 namespace Badword\Filter\Config\Rule;
 
+use Badword\Word;
+
 class CharacterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Character
      */
-    protected $characterStub;
+    protected $ruleStub;
 
     protected function setUp()
     {
-        $this->characterStub = new Character('a');
+        $this->ruleStub = new Character('a');
     }
 
     public function testConstruct()
@@ -29,89 +31,21 @@ class CharacterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('b', $character->getCharacter());
         $this->assertEquals(array(), $character->getAlternativeCharacters());
         $this->assertFalse($character->getDetectRepetition());
-        $this->assertNull($character->getCanBeRepeatedFor());
 
         $character = new Character('b', array('c', 'd', 'e'));
         $this->assertEquals('b', $character->getCharacter());
         $this->assertEquals(array('c', 'd', 'e'), $character->getAlternativeCharacters());
         $this->assertFalse($character->getDetectRepetition());
-        $this->assertNull($character->getCanBeRepeatedFor());
 
         $character = new Character('b', array('c', 'd'), true);
         $this->assertEquals('b', $character->getCharacter());
         $this->assertEquals(array('c', 'd'), $character->getAlternativeCharacters());
-        $this->assertTrue($character->getDetectRepetition());
-        $this->assertNull($character->getCanBeRepeatedFor());
+        $this->assertEquals(1, $character->getDetectRepetition());
 
-        $character = new Character('b', array('d', 'e'), true, 3);
+        $character = new Character('b', array('c', 'd'), 2);
         $this->assertEquals('b', $character->getCharacter());
-        $this->assertEquals(array('d', 'e'), $character->getAlternativeCharacters());
-        $this->assertTrue($character->getDetectRepetition());
-        $this->assertEquals(3, $character->getCanBeRepeatedFor());
-    }
-
-    public function dataProviderAddAlternativeCharacter()
-    {
-        return array(
-            array(true, array('foo')),
-            array(true, true),
-            array(true, false),
-            array(true, null),
-            array(true, 0),
-            array(true, 1),
-            array(true, ''),
-            array(true, '    '),
-            array(true, 'fd'),
-            array(false, 'f')
-        );
-    }
-
-    /**
-     * @dataProvider dataProviderAddAlternativeCharacter
-     */
-    public function testAddAlternativeCharacter($expectError, $data)
-    {
-        $this->setExpectedException($expectError ? '\InvalidArgumentException' : null);
-        $this->assertInstanceOf('Badword\Filter\Config\Rule\Character', $this->characterStub->addAlternativeCharacter($data));
-        $this->assertEquals(array($data), $this->characterStub->getAlternativeCharacters());
-    }
-
-    public function testAddingAlternativeCharacter()
-    {
-        $this->characterStub->addAlternativeCharacter('a');
-        $this->assertEquals(array('a'), $this->characterStub->getAlternativeCharacters());
-
-        $this->characterStub->addAlternativeCharacter('a');
-        $this->assertEquals(array('a'), $this->characterStub->getAlternativeCharacters());
-
-        try
-        {
-            $this->characterStub->addAlternativeCharacters(array('a', 'foo', 'c'));
-            $this->fail('Expected \InvalidArgumentException not thrown.');
-        }
-        catch(\InvalidArgumentException $e) {}
-
-        $this->characterStub->addAlternativeCharacters(array('a', 'b', 'c'));
-        $this->assertEquals(array('a', 'b', 'c'), $this->characterStub->getAlternativeCharacters());
-
-        $this->characterStub->addAlternativeCharacters(array('test' => 'c', 'd', 'test2' => 'e', 'test3' => 'e'));
-        $this->assertEquals(array('a', 'b', 'c', 'd', 'e'), $this->characterStub->getAlternativeCharacters());
-
-        $this->characterStub->addAlternativeCharacter('D');
-        $this->assertEquals(array('a', 'b', 'c', 'd', 'e'), $this->characterStub->getAlternativeCharacters());
-
-        $this->characterStub->addAlternativeCharacters(array('test' => 'G', 'F', 'test2' => 'D'));
-        $this->assertEquals(array('a', 'b', 'c', 'd', 'e', 'g', 'f'), $this->characterStub->getAlternativeCharacters());
-
-        try
-        {
-            $this->characterStub->setAlternativeCharacters(array('a', 'foo', 'c'));
-            $this->fail('Expected \InvalidArgumentException not thrown.');
-        }
-        catch(\InvalidArgumentException $e) {}
-
-        $this->characterStub->setAlternativeCharacters(array('x', 'Y', 'z', 'Z'));
-        $this->assertEquals(array('x', 'y', 'z'), $this->characterStub->getAlternativeCharacters());
+        $this->assertEquals(array('c', 'd'), $character->getAlternativeCharacters());
+        $this->assertEquals(2, $character->getDetectRepetition());
     }
 
     public function dataProviderSettingCharacter()
@@ -137,34 +71,8 @@ class CharacterTest extends \PHPUnit_Framework_TestCase
     public function testSettingCharacter($expectError, $data)
     {
         $this->setExpectedException($expectError ? '\InvalidArgumentException' : null);
-        $this->assertInstanceOf('Badword\Filter\Config\Rule\Character', $this->characterStub->setCharacter($data));
-        $this->assertEquals($data, $this->characterStub->getCharacter());
-    }
-
-    public function dataProviderSettingCanBeRepeatedFor()
-    {
-        return array(
-            array(true, array('foo')),
-            array(true, true),
-            array(true, false),
-            array(true, ''),
-            array(true, '    '),
-            array(true, 'foobar'),
-            array(true, 0),
-            array(true, -1),
-            array(false, null),
-            array(false, 1)
-        );
-    }
-
-    /**
-     * @dataProvider dataProviderSettingCanBeRepeatedFor
-     */
-    public function testSettingCanBeRepeatedFor($expectError, $data)
-    {
-        $this->setExpectedException($expectError ? '\InvalidArgumentException' : null);
-        $this->assertInstanceOf('Badword\Filter\Config\Rule\Character', $this->characterStub->setCanBeRepeatedFor($data));
-        $this->assertEquals($data, $this->characterStub->getCanBeRepeatedFor());
+        $this->assertInstanceOf('Badword\Filter\Config\Rule\Character', $this->ruleStub->setCharacter($data));
+        $this->assertEquals($data, $this->ruleStub->getCharacter());
     }
 
     public function dataProviderSettingDetectRepetition()
@@ -172,13 +80,15 @@ class CharacterTest extends \PHPUnit_Framework_TestCase
         return array(
             array(true, array('foo')),
             array(true, null),
-            array(true, 0),
-            array(true, 1),
             array(true, ''),
             array(true, '    '),
             array(true, 'foobar'),
+            array(true, 0),
+            array(true, -1),
             array(false, true),
-            array(false, false)
+            array(false, false),
+            array(false, 1),
+            array(false, 2),
         );
     }
 
@@ -188,7 +98,39 @@ class CharacterTest extends \PHPUnit_Framework_TestCase
     public function testSettingDetectRepetition($expectError, $data)
     {
         $this->setExpectedException($expectError ? '\InvalidArgumentException' : null);
-        $this->assertInstanceOf('Badword\Filter\Config\Rule\Character', $this->characterStub->setDetectRepetition($data));
-        $this->assertEquals($data, $this->characterStub->getDetectRepetition());
+        $this->assertInstanceOf('Badword\Filter\Config\Rule\Character', $this->ruleStub->setDetectRepetition($data));
+        $this->assertEquals($data ? (int) $data : false, $this->ruleStub->getDetectRepetition());
+    }
+
+    public function dataProviderApply()
+    {
+        $wordStub1 = new Word('bazaars');
+
+        return array(
+            array($wordStub1, 'baza{2}rs', 'a'),
+            array($wordStub1, 'ba(z|@)aars', 'z', array('@')),
+            array($wordStub1, 'ba(z|@|\*)aars', 'z', array('@', '*')),
+            array($wordStub1, 'ba+za{2,}rs', 'a', array(), true),
+            array($wordStub1, 'baza{2,}rs', 'a', array(), 2),
+            array($wordStub1, 'baza{2}rs', 'a', array(), 3),
+            array($wordStub1, 'b(a|@)+z(a|@){2,}rs', 'a', array('@'), true),
+            array($wordStub1, 'b(a|@|\*)+z(a|@|\*){2,}rs', 'a', array('@', '*'), true),
+            array($wordStub1, 'b(a|@)z(a|@){2,}rs', 'a', array('@'), 2),
+            array($wordStub1, 'b(a|@|\*)z(a|@|\*){2,}rs', 'a', array('@', '*'), 2),
+            array($wordStub1, 'b(a|@)z(a|@){2}rs', 'a', array('@'), 3),
+            array($wordStub1, 'b(a|@|\*)z(a|@|\*){2}rs', 'a', array('@', '*'), 3),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderApply
+     */
+    public function testApply(Word $word, $expectedResult, $character, $alternativeCharacters = array(), $detectRepetition = false)
+    {
+        $this->ruleStub->setCharacter($character);
+        $this->ruleStub->setAlternativeCharacters($alternativeCharacters);
+        $this->ruleStub->setDetectRepetition($detectRepetition);
+
+        $this->assertEquals($expectedResult, $this->ruleStub->apply($word->getWord(), $word));
     }
 }

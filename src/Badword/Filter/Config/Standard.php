@@ -33,11 +33,11 @@ class Standard extends Config
 
         // Vowels
         $this->addRules(array(
-            new Character('a', array('@', '*'), true, 2),
-            new Character('e', array('3', '*'), true, 2),
-            new Character('i', array('1', '!', '*'), true, 2),
-            new Character('o', array('0', '*'), true, 2),
-            new Character('u', array('*'), true, 2)
+            new Character('a', array('@', '*'), true),
+            new Character('e', array('3', '*'), true),
+            new Character('i', array('1', '!', '*'), true),
+            new Character('o', array('0', '*'), true),
+            new Character('u', array('*'), true)
         ));
 
         // Consonants
@@ -46,7 +46,7 @@ class Standard extends Config
             new Character('c', array('*')),
             new Character('h', array('*')),
             new Character('l', array('1')),
-            new Character('s', array('5', '$'), false, 2)
+            new Character('s', array('5', '$'), 2)
         ));
 
         // Whitespace
