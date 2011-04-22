@@ -26,6 +26,11 @@ class Result
     protected $content;
 
     /**
+     * @var string
+     */
+    protected $highlightedContentClass = 'badword';
+
+    /**
      * @var array
      */
     protected $matches;
@@ -50,23 +55,6 @@ class Result
     public function getContent()
     {
         return $this->content;
-    }
-
-    /**
-     * Gets the content that was filtered with suspected bad words highlighted using <span>'s.
-     *
-     * @return string
-     */
-    public function getHighlightedContent()
-    {
-        $content = htmlentities($this->getContent());
-
-        foreach($this->getMatches() as $match)
-        {
-            $content = preg_replace('/('.$match.')/iu', '<span class="badword">$1</span>', $content);
-        }
-
-        return $content;
     }
 
     /**
@@ -106,5 +94,48 @@ class Result
     public function isClean()
     {
         return count($this->getMatches()) === 0;
+    }
+    
+    /**
+     * Gets the CSS class used when highlighting suspected bad words in content.
+     *
+     * @return string
+     */
+    protected function getHighlightedContentClass()
+    {
+        return $this->highlightedContentClass;
+    }
+
+    /**
+     * Sets the CSS class used when highlighting suspected bad words in content.
+     *
+     * @return string
+     */
+    public function setHighlightedContentClass($class)
+    {
+        if(!(is_string($class) && strlen(trim($class)) > 0))
+        {
+            throw new \InvalidArgumentException('Invalid highlight content CSS class "%s". Please provide a non-empty string.', $class);
+        }
+
+        $this->highlightedContentClass = trim($class);
+        return $this;
+    }
+
+    /**
+     * Gets the content that was filtered with suspected bad words highlighted using <span>'s.
+     *
+     * @return string
+     */
+    public function getHighlightedContent()
+    {
+        $content = htmlentities($this->getContent());
+
+        foreach($this->getMatches() as $match)
+        {
+            $content = preg_replace('/('.$match.')/iu', sprintf('<span class="%s">$1</span>', $this->getHighlightedContentClass()), $content);
+        }
+
+        return $content;
     }
 }
