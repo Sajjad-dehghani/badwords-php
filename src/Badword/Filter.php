@@ -207,22 +207,43 @@ class Filter
     }
 
     /**
-     * Filters some content for bad words and returns a Result.
+     * Filters some content for bad words and returns a Result. 
+     * If multiple contents are specified, multiple Results will be returned.
      *
-     * @param string $content
+     * @param string|array $content A single content string or an array of content strings.
      *
-     * @return Result
+     * @return Result|array A single Result or an array of Results.
      *
-     * @throws \InvalidArgumentException When the content is invalid.
+     * @throws \InvalidArgumentException When a content string is invalid.
      */
     public function filter($content)
     {
-        if(!(is_string($content) && strlen(trim($content)) > 0))
+        $singleContent = false;
+        if(!is_array($content))
         {
-            throw new \InvalidArgumentException('Invalid content. Please provide a non-empty string.');
+            $content = array($content);
+            $singleContent = true;
         }
 
-        return new Result($content, $this->filterString($content));
+        foreach($content as $key => $string)
+        {
+            if(!(is_string($string) && strlen(trim($string)) > 0))
+            {
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid content%s. Please provide a non-empty string.',
+                    (count($string) > 1 ? sprintf(' at index "%s".', $key) : null)
+                ));
+            }
+        }
+
+        $results = array();
+
+        foreach($content as $key => $string)
+        {
+            array_push($results, new Result($string, $this->filterString($string)));
+        }
+
+        return count($results) === 1 && $singleContent ? $results[0] : $results;
     }
 
     /**
