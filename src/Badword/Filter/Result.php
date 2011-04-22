@@ -31,20 +31,32 @@ class Result
     protected $highlightedContentClass = 'badword';
 
     /**
+     * @var string
+     */
+    protected $highlightedContentRiskLevelClassSuffix = 'risk-level-';
+
+    /**
      * @var array
      */
     protected $matches;
+
+    /**
+     * @var array
+     */
+    protected $riskLevels;
 
     /**
      * Constructs a new Result.
      *
      * @param string $content The content that was filtered.
      * @param array $matches The matches found in the content suspected of being bad words.
+     * @param array $riskLevels The risk levels for each Dictionary used to filter the content with.
      */
-    public function __construct($content, array $matches)
+    public function __construct($content, array $matches, array $riskLevels)
     {
         $this->content = $content;
         $this->matches = $matches;
+        $this->riskLevels = $riskLevels;
     }
 
     /**
@@ -75,6 +87,34 @@ class Result
     }
 
     /**
+     * Gets the matches found in the content suspected of being bad words and their specific risk levels.
+     * 
+     * @return array An array where suspected bad words are keys and risk levels are values.
+     */
+    public function getMatchesAndRiskLevels()
+    {
+        $matchesAndRisk = array();
+
+        foreach($this->matches as $dictionaryId => $dictionaryMatches)
+        {
+            foreach($dictionaryMatches as $match)
+            {
+                if(!isset($matchesAndRisk[$match]))
+                {
+                    $matchesAndRisk[$match] = null;
+                }
+
+                if(isset($this->riskLevels[$dictionaryId]) && $this->riskLevels[$dictionaryId] !== null)
+                {
+                    $matchesAndRisk[$match] = $this->riskLevels[$dictionaryId] > $matchesAndRisk[$match] ? $this->riskLevels[$dictionaryId] : $matchesAndRisk[$match];
+                }
+            }
+        }
+
+        return $matchesAndRisk;
+    }
+
+    /**
      * Gets the matches for a specific Dictionary found in the content suspected of being bad words.
      *
      * @param Dictionary $dictionary
@@ -84,6 +124,27 @@ class Result
     public function getDictionaryMatches(Dictionary $dictionary)
     {
         return isset($this->matches[$dictionary->getId()]) ? $this->matches[$dictionary->getId()] : array();
+    }
+
+    /**
+     * Gets the maximum level of risk the content poses. The greater
+     * the number, the greater the risk. 0 is considered no risk.
+     *
+     * @return integer
+     */
+    public function getRiskLevel()
+    {
+        $riskLevel = null;
+
+        foreach($this->matches as $dictionaryId => $dictionaryMatches)
+        {
+            if(isset($this->riskLevels[$dictionaryId]) && $this->riskLevels[$dictionaryId] !== null)
+            {
+                $riskLevel = $this->riskLevels[$dictionaryId] > $riskLevel ? $this->riskLevels[$dictionaryId] : $riskLevel;
+            }
+        }
+
+        return $riskLevel;
     }
 
     /**
@@ -115,10 +176,38 @@ class Result
     {
         if(!(is_string($class) && strlen(trim($class)) > 0))
         {
-            throw new \InvalidArgumentException('Invalid highlight content CSS class "%s". Please provide a non-empty string.', $class);
+            throw new \InvalidArgumentException('Invalid highlight CSS class "%s". Please provide a non-empty string.', $class);
         }
 
         $this->highlightedContentClass = trim($class);
+        return $this;
+    }
+
+    /**
+     * Gets the CSS class suffix used to highlight the risk level
+     * when highlighting suspected bad words in content.
+     *
+     * @return string
+     */
+    protected function getHighlightedContentRiskLevelClassSuffix()
+    {
+        return $this->highlightedContentRiskLevelClassSuffix;
+    }
+
+    /**
+     * Sets the CSS class suffix used to highlight the risk level
+     * when highlighting suspected bad words in content.
+     *
+     * @return string
+     */
+    public function setHighlightedContentRiskLevelClassSuffix($class)
+    {
+        if(!(is_string($class) && strlen(trim($class)) > 0))
+        {
+            throw new \InvalidArgumentException('Invalid highlight risk level CSS class suffix "%s". Please provide a non-empty string.', $class);
+        }
+
+        $this->highlightedContentRiskLevelClassSuffix = trim($class);
         return $this;
     }
 
@@ -131,9 +220,15 @@ class Result
     {
         $content = htmlentities($this->getContent());
 
-        foreach($this->getMatches() as $match)
+        foreach($this->getMatchesAndRiskLevels() as $match => $riskLevel)
         {
-            $content = preg_replace('/('.$match.')/iu', sprintf('<span class="%s">$1</span>', $this->getHighlightedContentClass()), $content);
+            $replacement = sprintf(
+                '<span class="%s%s">$1</span>',
+                $this->getHighlightedContentClass(),
+                ($riskLevel !== null ? ' '.$this->getHighlightedContentRiskLevelClassSuffix().$riskLevel : null)
+            );
+
+            $content = preg_replace('/('.$match.')/iu', $replacement, $content);
         }
 
         return $content;

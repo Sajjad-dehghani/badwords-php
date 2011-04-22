@@ -172,9 +172,9 @@ abstract class AbstractDictionary implements Dictionary
      */
     public function setRiskLevel($riskLevel)
     {
-        if(!($riskLevel === null || (is_int($riskLevel) && $riskLevel >= 0)))
+        if(!($riskLevel === null || (is_int($riskLevel) && $riskLevel > 0)))
         {
-            throw new \InvalidArgumentException(sprintf('Invalid risk level "%s". Please provide an integer greater than or equal to 0, or null.', $riskLevel));
+            throw new \InvalidArgumentException(sprintf('Invalid risk level "%s". Please provide an integer greater than 0, or null.', $riskLevel));
         }
 
         $this->riskLevel = $riskLevel;

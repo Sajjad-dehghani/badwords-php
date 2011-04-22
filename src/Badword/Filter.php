@@ -237,10 +237,11 @@ class Filter
         }
 
         $results = array();
+        $riskLevels = $this->getDictionaryRiskLevels();
 
         foreach($content as $key => $string)
         {
-            array_push($results, new Result($string, $this->filterString($string)));
+            array_push($results, new Result($string, $this->filterString($string), $riskLevels));
         }
 
         return count($results) === 1 && $singleContent ? $results[0] : $results;
@@ -414,5 +415,22 @@ class Filter
     protected function getDictionaryRegExpsCacheKey(Dictionary $dictionary)
     {
         return $dictionary->getId().'_regexps_'.(md5(serialize($this->getConfig())));
+    }
+
+    /**
+     * Gets the risk level of each Dictionary indexed by Dictionary ID.
+     *
+     * @return array
+     */
+    protected function getDictionaryRiskLevels()
+    {
+        $riskLevels = array();
+
+        foreach($this->getDictionaries() as $dictionary)
+        {
+            $riskLevels[$dictionary->getId()] = $dictionary->getRiskLevel();
+        }
+
+        return $riskLevels;
     }
 }
