@@ -12,7 +12,7 @@
 namespace Badword;
 
 /**
- * Dictionary loads a list of bad words.
+ * Dictionary gets a list of bad words.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */

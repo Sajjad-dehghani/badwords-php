@@ -265,7 +265,7 @@ class Filter
             // Get the regular expressions
             $regExps = $this->getDictionaryRegExps($dictionary);
 
-            // Run the string through each RegEx and store any matches
+            // Run the string through each RegExp and store any matches
             foreach($regExps as $regExp)
             {
                 if(preg_match_all('/'.$regExp.'/iu', $string, $regExpMatches))

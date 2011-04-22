@@ -53,6 +53,23 @@ class Result
     }
 
     /**
+     * Gets the content that was filtered with suspected bad words highlighted using <span>'s.
+     *
+     * @return string
+     */
+    public function getHighlightedContent()
+    {
+        $content = htmlentities($this->getContent());
+
+        foreach($this->getMatches() as $match)
+        {
+            $content = preg_replace('/('.$match.')/iu', '<span class="badword">$1</span>', $content);
+        }
+
+        return $content;
+    }
+
+    /**
      * Gets the matches found in the content suspected of being bad words.
      *
      * @return array
@@ -70,13 +87,13 @@ class Result
     }
 
     /**
-     * Gets the matches found in the content suspected of being bad words for a specific Dictionary.
+     * Gets the matches for a specific Dictionary found in the content suspected of being bad words.
      *
      * @param Dictionary $dictionary
      * 
      * @return array
      */
-    public function getMatchesForDictionary(Dictionary $dictionary)
+    public function getDictionaryMatches(Dictionary $dictionary)
     {
         return isset($this->matches[$dictionary->getId()]) ? $this->matches[$dictionary->getId()] : array();
     }
