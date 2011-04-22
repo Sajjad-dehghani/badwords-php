@@ -30,11 +30,12 @@ abstract class AbstractFile extends AbstractDictionary
      * Constucts a new Dictionary.
      *
      * @param string $path The path to the source file.
+     * @param integer $riskLevel The level of risk associated with the bad words.
      * @param Cache $cache The caching mechanism to use.
      */
-    public function __construct($path, Cache $cache = null)
+    public function __construct($path, $riskLevel = null, Cache $cache = null)
     {
-        parent::__construct($cache);
+        parent::__construct($riskLevel, $cache);
 
         $this->setPath($path);
     }

@@ -39,17 +39,24 @@ abstract class AbstractDictionary implements Dictionary
     protected $mustStartWordDefault = false;
 
     /**
+     * @var integer
+     */
+    protected $riskLevel;
+
+    /**
      * @var array
      */
     protected $words;
 
     /**
      * Constucts a new Dictionary.
-     * 
+     *
+     * @param integer $riskLevel The level of risk associated with the bad words.
      * @param Cache $cache The caching mechanism to use.
      */
-    public function __construct(Cache $cache = null)
+    public function __construct($riskLevel = null, Cache $cache = null)
     {
+        $this->setRiskLevel($riskLevel);
         $this->setCache($cache ?: new None());
     }
 
@@ -139,6 +146,38 @@ abstract class AbstractDictionary implements Dictionary
         }
 
         $this->mustStartWordDefault = $mustStartWordDefault;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRiskLevel()
+    {
+        return $this->riskLevel;
+    }
+
+    /**
+     * Sets the level of risk associated with the bad words. The greater
+     * the number, the greater the risk. 0 is considered no risk.
+     *
+     * For example, a Dictionary containing bad words that only require
+     * moderation could have a risk level of 1. Where as a Dictionary
+     * containing bad words that should be instantly rejected could have
+     * a risk level of 2. The scale past 0 is completely arbitrary.
+     *
+     * @param integer $riskLevel
+     * 
+     * @return AbstractDictionary
+     */
+    public function setRiskLevel($riskLevel)
+    {
+        if(!($riskLevel === null || (is_int($riskLevel) && $riskLevel >= 0)))
+        {
+            throw new \InvalidArgumentException(sprintf('Invalid risk level "%s". Please provide an integer greater than or equal to 0, or null.', $riskLevel));
+        }
+
+        $this->riskLevel = $riskLevel;
         return $this;
     }
 

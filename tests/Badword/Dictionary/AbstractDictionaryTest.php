@@ -97,6 +97,33 @@ class AbstractDictionaryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($data, $this->dictionaryStub->getMustStartWordDefault());
     }
 
+    public function dataProviderSettingRiskLevel()
+    {
+        return array(
+            array(true, array('foo')),
+            array(true, true),
+            array(true, false),
+            array(true, ''),
+            array(true, '    '),
+            array(true, 'foobar'),
+            array(true, -1),
+            array(true, 1.5),
+            array(false, null),
+            array(false, 0),
+            array(false, 1),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderSettingRiskLevel
+     */
+    public function testSettingRiskLevel($expectError, $data)
+    {
+        $this->setExpectedException($expectError ? '\InvalidArgumentException' : null);
+        $this->assertInstanceOf('\Badword\Dictionary\AbstractDictionary', $this->dictionaryStub->setRiskLevel($data));
+        $this->assertEquals($data, $this->dictionaryStub->getRiskLevel());
+    }
+
     public function testGetWords()
     {
         $words = $this->dictionaryStub->getWords();
