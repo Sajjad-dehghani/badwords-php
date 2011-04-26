@@ -14,7 +14,8 @@ namespace Badword\Filter\Config;
 use Badword\Word;
 
 /**
- * Rule defines a specific rule for the Config to implement.
+ * Rule defines a specific regular expression generation
+ * rule for the Config to implement.
  * 
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */

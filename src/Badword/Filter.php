@@ -359,7 +359,7 @@ class Filter
         $wordRegExps = array();
         foreach($dictionary->getWords() as $word)
         {
-            array_push($wordRegExps, $this->getConfig()->apply($word));
+            array_push($wordRegExps, $this->getConfig()->applyRulesToWord($word));
         }
 
         $regExps = array();

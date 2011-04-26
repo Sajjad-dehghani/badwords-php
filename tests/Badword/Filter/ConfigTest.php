@@ -185,7 +185,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array($ruleStub7, $ruleStub6), $this->configStub->getPostRules());
     }
 
-    public function dataProviderApply()
+    public function dataProviderApplyRulesToWord()
     {
         $ruleStub1 = new RuleStub('a');
         $ruleStub2 = new RuleStub('b');
@@ -208,15 +208,15 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider dataProviderApply
+     * @dataProvider dataProviderApplyRulesToWord
      */
-    public function testApply($word, $expectedResult, array $rules = array(), array $preRules = array(), array $postRules = array())
+    public function testApplyRulesToWord($word, $expectedResult, array $rules = array(), array $preRules = array(), array $postRules = array())
     {
         $this->configStub->setRules($rules);
         $this->configStub->setPreRules($preRules);
         $this->configStub->setPostRules($postRules);
 
-        $this->assertEquals($expectedResult, $this->configStub->apply($word));
+        $this->assertEquals($expectedResult, $this->configStub->applyRulesToWord($word));
     }
 }
 

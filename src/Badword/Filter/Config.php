@@ -15,7 +15,8 @@ use Badword\Filter\Config\Rule;
 use Badword\Word;
 
 /**
- * Config defines the rules and settings the Filter adheres to when executing.
+ * Config defines settings and regular expression generation
+ * rules the Filter adheres to when executing.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
@@ -59,12 +60,7 @@ class Config
      */
     public function addRule(Rule $rule)
     {
-        if(!in_array($rule, $this->getRules()))
-        {
-            array_push($this->rules, $rule);
-        }
-
-        return $this;
+        return $this->addRuleToStack($rule, $this->rules);
     }
 
     /**
@@ -78,20 +74,7 @@ class Config
      */
     public function addRules(array $rules)
     {
-        foreach($rules as $key => $rule)
-        {
-            if(!($rule instanceof Rule))
-            {
-                throw new \InvalidArgumentException(sprintf('Invalid rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
-            }
-        }
-
-        foreach($rules as $rule)
-        {
-            $this->addRule($rule);
-        }
-
-        return $this;
+        return $this->addRulesToStack($rules, $this->rules);
     }
 
     /**
@@ -110,27 +93,12 @@ class Config
      * @param array $rules
      *
      * @return Config
-     *
+     * 
      * @throws \InvalidArgumentException When a rule is invalid.
      */
     public function setRules(array $rules)
     {
-        foreach($rules as $key => $rule)
-        {
-            if(!($rule instanceof Rule))
-            {
-                throw new \InvalidArgumentException(sprintf('Invalid rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
-            }
-        }
-
-        $this->rules = array();
-
-        foreach($rules as $rule)
-        {
-            $this->addRule($rule);
-        }
-
-        return $this;
+        return $this->setRulesToStack($rules, $this->rules);
     }
 
     /**
@@ -142,12 +110,7 @@ class Config
      */
     public function addPreRule(Rule $rule)
     {
-        if(!in_array($rule, $this->getPreRules()))
-        {
-            array_push($this->preRules, $rule);
-        }
-
-        return $this;
+        return $this->addRuleToStack($rule, $this->preRules);
     }
 
     /**
@@ -157,24 +120,11 @@ class Config
      *
      * @return Config
      *
-     * @throws \InvalidArgumentException When a "pre" rule is invalid.
+     * @throws \InvalidArgumentException When a rule is invalid.
      */
     public function addPreRules(array $rules)
     {
-        foreach($rules as $key => $rule)
-        {
-            if(!($rule instanceof Rule))
-            {
-                throw new \InvalidArgumentException(sprintf('Invalid "pre" rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
-            }
-        }
-
-        foreach($rules as $rule)
-        {
-            $this->addPreRule($rule);
-        }
-
-        return $this;
+        return $this->addRulesToStack($rules, $this->preRules);
     }
 
     /**
@@ -194,26 +144,11 @@ class Config
      *
      * @return Config
      *
-     * @throws \InvalidArgumentException When a "pre" rule is invalid.
+     * @throws \InvalidArgumentException When a rule is invalid.
      */
     public function setPreRules(array $rules)
     {
-        foreach($rules as $key => $rule)
-        {
-            if(!($rule instanceof Rule))
-            {
-                throw new \InvalidArgumentException(sprintf('Invalid "pre" rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
-            }
-        }
-
-        $this->preRules = array();
-
-        foreach($rules as $rule)
-        {
-            $this->addPreRule($rule);
-        }
-
-        return $this;
+        return $this->setRulesToStack($rules, $this->preRules);
     }
 
     /**
@@ -225,12 +160,7 @@ class Config
      */
     public function addPostRule(Rule $rule)
     {
-        if(!in_array($rule, $this->getPostRules()))
-        {
-            array_push($this->postRules, $rule);
-        }
-
-        return $this;
+        return $this->addRuleToStack($rule, $this->postRules);
     }
 
     /**
@@ -240,24 +170,11 @@ class Config
      *
      * @return Config
      *
-     * @throws \InvalidArgumentException When a "post" rule is invalid.
+     * @throws \InvalidArgumentException When a rule is invalid.
      */
     public function addPostRules(array $rules)
     {
-        foreach($rules as $key => $rule)
-        {
-            if(!($rule instanceof Rule))
-            {
-                throw new \InvalidArgumentException(sprintf('Invalid "post" rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
-            }
-        }
-
-        foreach($rules as $rule)
-        {
-            $this->addPostRule($rule);
-        }
-
-        return $this;
+        return $this->addRulesToStack($rules, $this->postRules);
     }
 
     /**
@@ -277,36 +194,97 @@ class Config
      *
      * @return Config
      *
-     * @throws \InvalidArgumentException When a "post" rule is invalid.
+     * @throws \InvalidArgumentException When a rule is invalid.
      */
     public function setPostRules(array $rules)
     {
-        foreach($rules as $key => $rule)
-        {
-            if(!($rule instanceof Rule))
-            {
-                throw new \InvalidArgumentException(sprintf('Invalid "post" rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
-            }
-        }
+        return $this->setRulesToStack($rules, $this->postRules);
+    }
 
-        $this->postRules = array();
-
-        foreach($rules as $rule)
+    /**
+     * Adds a Rule to the specified stack.
+     *
+     * @param Rule $rule
+     * @param array &$stack
+     *
+     * @return Config
+     */
+    protected function addRuleToStack(Rule $rule, array &$stack)
+    {
+        if(!in_array($rule, $stack))
         {
-            $this->addPostRule($rule);
+            array_push($stack, $rule);
         }
 
         return $this;
     }
 
     /**
-     * Applies the Config to the Word.
+     * Adds Rules to the specified stack.
+     *
+     * @param array $rules
+     * @param array &$stack
+     *
+     * @return Config
+     *
+     * @throws \InvalidArgumentException When a rule is invalid.
+     */
+    protected function addRulesToStack(array $rules, array &$stack)
+    {
+        foreach($rules as $key => $rule)
+        {
+            if(!($rule instanceof Rule))
+            {
+                throw new \InvalidArgumentException(sprintf('Invalid rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
+            }
+        }
+
+        foreach($rules as $rule)
+        {
+            $this->addRuleToStack($rule, $stack);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the Rules for the specified stack.
+     *
+     * @param array $rules
+     * @param array &$stack
+     *
+     * @return Config
+     *
+     * @throws \InvalidArgumentException When a rule is invalid.
+     */
+    protected function setRulesToStack(array $rules, array &$stack)
+    {
+        foreach($rules as $key => $rule)
+        {
+            if(!($rule instanceof Rule))
+            {
+                throw new \InvalidArgumentException(sprintf('Invalid rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
+            }
+        }
+
+        $stack = array();
+
+        foreach($rules as $rule)
+        {
+            $this->addRuleToStack($rule, $stack);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Applies the regular expression generation Rules to the Word.
      *
      * @param Word $word
-     *
+     * 
      * @return string Generated regular expression.
      */
-    public function apply(Word $word)
+    public function applyRulesToWord(Word $word)
     {
         $regExp = addslashes($word->getWord());
         $rules = array_merge($this->getPreRules(), $this->getRules(), $this->getPostRules());

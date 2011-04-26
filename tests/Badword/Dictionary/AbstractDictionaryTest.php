@@ -108,9 +108,10 @@ class AbstractDictionaryTest extends \PHPUnit_Framework_TestCase
             array(true, 'foobar'),
             array(true, -1),
             array(true, 1.5),
+            array(true, 0),
             array(false, null),
-            array(false, 0),
             array(false, 1),
+            array(false, 2),
         );
     }
 
