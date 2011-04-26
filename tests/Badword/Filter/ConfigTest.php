@@ -204,7 +204,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(array('foo'), $this->configStub->getWhitelistedWords());
 
-        $this->assertInstanceOf('Badword\Filter\Config', $this->configStub->addWhitelistedWords(array('foo', 'bar', 'shu')));
+        $this->assertInstanceOf('Badword\Filter\Config', $this->configStub->addWhitelistedWords(array('foo', 'BAR ', 'shu')));
         $this->assertEquals(array('foo', 'bar', 'shu'), $this->configStub->getWhitelistedWords());
 
         $this->assertInstanceOf('Badword\Filter\Config', $this->configStub->addWhitelistedWords(array('test' => 'shu', 'koo', 'test2' => 'yii', 'test3' => 'yii')));

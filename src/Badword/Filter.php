@@ -266,12 +266,29 @@ class Filter
             // Get the regular expressions
             $regExps = $this->getDictionaryRegExps($dictionary);
 
-            // Run the string through each RegExp and store any matches
+            // Run each one on the string
             foreach($regExps as $regExp)
             {
+                // If matches are found
                 if(preg_match_all('/'.$regExp.'/iu', $string, $regExpMatches))
                 {
-                    $dictionaryMatches = array_merge($dictionaryMatches, $regExpMatches[0]);
+                    // If there are whitelisted words
+                    if($this->getConfig()->getWhitelistedWords())
+                    {
+                        // Only store each match if it isn't in the whitelist
+                        foreach($regExpMatches[0] as $regExpMatch)
+                        {
+                            if(!in_array(mb_strtolower(trim($regExpMatch)), $this->getConfig()->getWhitelistedWords()))
+                            {
+                                array_push($dictionaryMatches, $regExpMatch);
+                            }
+                        }
+                    }
+                    // Otherwise just straight store them
+                    else
+                    {
+                        $dictionaryMatches = array_merge($dictionaryMatches, $regExpMatches[0]);
+                    }
                 }
             }
 

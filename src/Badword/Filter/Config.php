@@ -303,7 +303,7 @@ class Config
 
         if(!in_array($word, $this->whitelist))
         {
-            array_push($this->whitelist, $word);
+            array_push($this->whitelist, mb_strtolower(trim($word)));
         }
 
         return $this;
