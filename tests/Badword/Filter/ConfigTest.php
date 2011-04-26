@@ -185,6 +185,44 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array($ruleStub7, $ruleStub6), $this->configStub->getPostRules());
     }
 
+    public function testAddingWhitelistedWords()
+    {
+        $wordStub = new Word('foo');
+
+        $this->assertInstanceOf('Badword\Filter\Config', $this->configStub->addWhitelistedWord($wordStub));
+        $this->assertEquals(array('foo'), $this->configStub->getWhitelistedWords());
+
+        $this->assertInstanceOf('Badword\Filter\Config', $this->configStub->addWhitelistedWord('foo'));
+        $this->assertEquals(array('foo'), $this->configStub->getWhitelistedWords());
+
+        try
+        {
+            $this->configStub->addWhitelistedWords(array('bar', 123456));
+            $this->fail('Expected \InvalidArgumentException not thrown.');
+        }
+        catch(\InvalidArgumentException $e) {}
+
+        $this->assertEquals(array('foo'), $this->configStub->getWhitelistedWords());
+
+        $this->assertInstanceOf('Badword\Filter\Config', $this->configStub->addWhitelistedWords(array('foo', 'bar', 'shu')));
+        $this->assertEquals(array('foo', 'bar', 'shu'), $this->configStub->getWhitelistedWords());
+
+        $this->assertInstanceOf('Badword\Filter\Config', $this->configStub->addWhitelistedWords(array('test' => 'shu', 'koo', 'test2' => 'yii', 'test3' => 'yii')));
+        $this->assertEquals(array('foo', 'bar', 'shu', 'koo', 'yii'), $this->configStub->getWhitelistedWords());
+
+        try
+        {
+            $this->configStub->setWhitelistedWords(array('gaa', 123456));
+            $this->fail('Expected \InvalidArgumentException not thrown.');
+        }
+        catch(\InvalidArgumentException $e) {}
+
+        $this->assertEquals(array('foo', 'bar', 'shu', 'koo', 'yii'), $this->configStub->getWhitelistedWords());
+
+        $this->assertInstanceOf('Badword\Filter\Config', $this->configStub->setWhitelistedWords(array('ler', 'gaa', 'ler')));
+        $this->assertEquals(array('ler', 'gaa'), $this->configStub->getWhitelistedWords());
+    }
+
     public function dataProviderApplyRulesToWord()
     {
         $ruleStub1 = new RuleStub('a');

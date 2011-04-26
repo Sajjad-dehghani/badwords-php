@@ -38,11 +38,16 @@ class Config
     protected $postRules = array();
 
     /**
+     * @var array
+     */
+    protected $whitelist = array();
+
+    /**
      * Constructs a new Config.
      * 
-     * @param array $rules The Rules.
-     * @param array $preRules The "pre" Rules (executed before the standard Rules).
-     * @param array $postRules The "post" Rules (executed after the standard Rules).
+     * @param array $rules The regular expression generation Rules.
+     * @param array $preRules The "pre" regular expression generation Rules (executed before the standard Rules).
+     * @param array $postRules The "post" regular expression generation Rules (executed after the standard Rules).
      */
     public function __construct(array $rules = array(), array $preRules = array(), array $postRules = array())
     {
@@ -52,7 +57,7 @@ class Config
     }
 
     /**
-     * Adds a Rule.
+     * Adds a regular expression generation Rule.
      * 
      * @param Rule $rule
      * 
@@ -64,7 +69,7 @@ class Config
     }
 
     /**
-     * Adds Rules.
+     * Adds regular expression generation Rules.
      *
      * @param array $rules
      *
@@ -78,7 +83,7 @@ class Config
     }
 
     /**
-     * Gets the Rules.
+     * Gets the regular expression generation Rules.
      *
      * @return array
      */
@@ -88,7 +93,7 @@ class Config
     }
 
     /**
-     * Sets the Rules.
+     * Sets the regular expression generation Rules.
      *
      * @param array $rules
      *
@@ -102,7 +107,7 @@ class Config
     }
 
     /**
-     * Adds a "pre" Rule (executed before the standard Rules).
+     * Adds a "pre" regular expression generation Rule (executed before the standard Rules).
      *
      * @param Rule $rule
      *
@@ -114,7 +119,7 @@ class Config
     }
 
     /**
-     * Adds "pre" Rules (executed before the standard Rules).
+     * Adds "pre" regular expression generation Rules (executed before the standard Rules).
      *
      * @param array $rules
      *
@@ -128,7 +133,7 @@ class Config
     }
 
     /**
-     * Gets the "pre" Rules (executed before the standard Rules).
+     * Gets the "pre" regular expression generation Rules (executed before the standard Rules).
      *
      * @return array
      */
@@ -138,7 +143,7 @@ class Config
     }
 
     /**
-     * Sets the "pre" Rules (executed before the standard Rules).
+     * Sets the "pre" regular expression generation Rules (executed before the standard Rules).
      *
      * @param array $rules
      *
@@ -152,7 +157,7 @@ class Config
     }
 
     /**
-     * Adds a "post" Rule (executed after the standard Rules).
+     * Adds a "post" regular expression generation Rule (executed after the standard Rules).
      *
      * @param Rule $rule
      *
@@ -164,7 +169,7 @@ class Config
     }
 
     /**
-     * Adds "post" Rules (executed after the standard Rules).
+     * Adds "post" regular expression generation Rules (executed after the standard Rules).
      *
      * @param array $rules
      *
@@ -178,7 +183,7 @@ class Config
     }
 
     /**
-     * Gets the "post" Rules (executed after the standard Rules).
+     * Gets the "post" regular expression generation Rules (executed after the standard Rules).
      *
      * @return array
      */
@@ -188,7 +193,7 @@ class Config
     }
 
     /**
-     * Sets the "post" Rules (executed after the standard Rules).
+     * Sets the "post" regular expression generation Rules (executed after the standard Rules).
      *
      * @param array $rules
      *
@@ -202,7 +207,7 @@ class Config
     }
 
     /**
-     * Adds a Rule to the specified stack.
+     * Adds a regular expression generation Rule to the specified stack.
      *
      * @param Rule $rule
      * @param array &$stack
@@ -220,7 +225,7 @@ class Config
     }
 
     /**
-     * Adds Rules to the specified stack.
+     * Adds regular expression generation Rules to the specified stack.
      *
      * @param array $rules
      * @param array &$stack
@@ -248,7 +253,7 @@ class Config
     }
 
     /**
-     * Sets the Rules for the specified stack.
+     * Sets the regular expression generation Rules for the specified stack.
      *
      * @param array $rules
      * @param array &$stack
@@ -272,6 +277,98 @@ class Config
         foreach($rules as $rule)
         {
             $this->addRuleToStack($rule, $stack);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Adds a word to the list of safe/whitelisted words.
+     *
+     * @param string|Word $word
+     * 
+     * @return Config
+     */
+    public function addWhitelistedWord($word)
+    {
+        if($word instanceof Word)
+        {
+            $word = $word->getWord();
+        }
+
+        if(!(is_string($word) && mb_strlen(trim($word)) > 0))
+        {
+            throw new \InvalidArgumentException('Invalid whitelist word. Expected non-empty string or instance of \Badword\Word.');
+        }
+
+        if(!in_array($word, $this->whitelist))
+        {
+            array_push($this->whitelist, $word);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Adds words to the list of safe/whitelisted words.
+     *
+     * @param array $words
+     *
+     * @return Config
+     */
+    public function addWhitelistedWords(array $words)
+    {
+        $currentWhitelist = $this->whitelist;
+
+        try
+        {
+            foreach($words as $key => $word)
+            {
+                $this->addWhitelistedWord($word);
+            }
+        }
+        catch(\InvalidArgumentException $e)
+        {
+            $this->whitelist = $currentWhitelist;
+            throw new \InvalidArgumentException(sprintf('Invalid whitelist word at key "%s". Expected non-empty string or instance of \Badword\Word.', $key));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Gets the list of safe/whitelisted words.
+     *
+     * @return array
+     */
+    public function getWhitelistedWords()
+    {
+        return $this->whitelist;
+    }
+
+    /**
+     * Sets the list of safe/whitelisted words.
+     *
+     * @param array $words
+     *
+     * @return Config
+     */
+    public function setWhitelistedWords(array $words)
+    {
+        $currentWhitelist = $this->whitelist;
+        $this->whitelist = array();
+
+        try
+        {
+            foreach($words as $key => $word)
+            {
+                $this->addWhitelistedWord($word);
+            }
+        }
+        catch(\InvalidArgumentException $e)
+        {
+            $this->whitelist = $currentWhitelist;
+            throw new \InvalidArgumentException(sprintf('Invalid whitelist word at key "%s". Expected non-empty string or instance of \Badword\Word.', $key));
         }
 
         return $this;
