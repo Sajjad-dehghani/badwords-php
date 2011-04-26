@@ -177,7 +177,7 @@ class Filter
      */
     public function setDictionaries(array $dictionaries)
     {
-        foreach($dictionaries as $dictionary)
+        foreach($dictionaries as $key => $dictionary)
         {
             if(!($dictionary instanceof Dictionary))
             {
@@ -338,7 +338,9 @@ class Filter
 
         if(!(is_array($regExps)))
         {
+            // @codeCoverageIgnoreStart
             throw new Exception(sprintf('Error while loading or generating regular expressions for Dictionary with ID "%s".', $dictionary->getId()));
+            // @codeCoverageIgnoreEnd
         }
 
         if(!$fromCache)
