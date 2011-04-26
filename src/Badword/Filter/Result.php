@@ -28,7 +28,7 @@ class Result
     /**
      * @var string
      */
-    protected $highlightedContentClass = 'badword';
+    protected $highlightedContentBadwordClass = 'badword';
 
     /**
      * @var string
@@ -162,9 +162,9 @@ class Result
      *
      * @return string
      */
-    protected function getHighlightedContentClass()
+    protected function getHighlightedContentBadwordClass()
     {
-        return $this->highlightedContentClass;
+        return $this->highlightedContentBadwordClass;
     }
 
     /**
@@ -172,14 +172,14 @@ class Result
      *
      * @return string
      */
-    public function setHighlightedContentClass($class)
+    public function setHighlightedContentBadwordClass($class)
     {
         if(!(is_string($class) && strlen(trim($class)) > 0))
         {
             throw new \InvalidArgumentException('Invalid highlight CSS class "%s". Please provide a non-empty string.', $class);
         }
 
-        $this->highlightedContentClass = trim($class);
+        $this->highlightedContentBadwordClass = trim($class);
         return $this;
     }
 
@@ -224,7 +224,7 @@ class Result
         {
             $replacement = sprintf(
                 '<span class="%s%s">$1</span>',
-                $this->getHighlightedContentClass(),
+                $this->getHighlightedContentBadwordClass(),
                 ($riskLevel !== null ? ' '.$this->getHighlightedContentRiskLevelClassSuffix().$riskLevel : null)
             );
 
