@@ -135,8 +135,8 @@ class AbstractDictionaryTest extends \PHPUnit_Framework_TestCase
         {
             $this->assertInstanceOf('\Badword\Word', $word);
             $this->assertEquals(static::$wordsData[$key][0], $word->getWord());
-            $this->assertEquals(isset(static::$wordsData[$key][1]) && static::$wordsData[$key][1] ? true : false, $word->getMustStartWord());
-            $this->assertEquals(isset(static::$wordsData[$key][2]) && static::$wordsData[$key][2] ? true : false, $word->getMustEndWord());
+            $this->assertEquals(isset(static::$wordsData[$key][1]) && !static::$wordsData[$key][1] ? false : true, $word->getMustStartWord());
+            $this->assertEquals(isset(static::$wordsData[$key][2]) && !static::$wordsData[$key][2] ? false : true, $word->getMustEndWord());
         }
     }
 }

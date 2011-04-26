@@ -29,11 +29,11 @@ class MustEndWordTest extends \PHPUnit_Framework_TestCase
     {
         $wordStub1 = new Word('bazaars');
         $wordStub2 = new Word('bazaars');
-        $wordStub2->setMustEndWord(true);
+        $wordStub2->setMustEndWord(false);
 
         return array(
-            array($wordStub1, 'bazaars'),
-            array($wordStub2, 'bazaars\b'),
+            array($wordStub1, 'bazaars\b'),
+            array($wordStub2, 'bazaars'),
         );
     }
 

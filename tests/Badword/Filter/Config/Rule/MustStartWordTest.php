@@ -29,11 +29,11 @@ class MustStartWordTest extends \PHPUnit_Framework_TestCase
     {
         $wordStub1 = new Word('bazaars');
         $wordStub2 = new Word('bazaars');
-        $wordStub2->setMustStartWord(true);
+        $wordStub2->setMustStartWord(false);
 
         return array(
-            array($wordStub1, 'bazaars'),
-            array($wordStub2, '\bbazaars'),
+            array($wordStub1, '\bbazaars'),
+            array($wordStub2, 'bazaars'),
         );
     }
 

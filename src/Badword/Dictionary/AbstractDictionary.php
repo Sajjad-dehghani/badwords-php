@@ -31,12 +31,12 @@ abstract class AbstractDictionary implements Dictionary
     /**
      * @var boolean
      */
-    protected $mustEndWordDefault = false;
+    protected $mustEndWordDefault = true;
 
     /**
      * @var boolean
      */
-    protected $mustStartWordDefault = false;
+    protected $mustStartWordDefault = true;
 
     /**
      * @var integer
@@ -100,7 +100,7 @@ abstract class AbstractDictionary implements Dictionary
      *
      * @return AbstractDictionary
      */
-    public function setMustEndWordDefault($mustEndWordDefault = false)
+    public function setMustEndWordDefault($mustEndWordDefault = true)
     {
         if(!is_bool($mustEndWordDefault))
         {
@@ -133,7 +133,7 @@ abstract class AbstractDictionary implements Dictionary
      *
      * @return AbstractDictionary
      */
-    public function setMustStartWordDefault($mustStartWordDefault = false)
+    public function setMustStartWordDefault($mustStartWordDefault = true)
     {
         if(!is_bool($mustStartWordDefault))
         {

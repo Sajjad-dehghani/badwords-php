@@ -40,13 +40,13 @@ class PhpTest extends \PHPUnit_Framework_TestCase
                        ->method('getPath')
                        ->will($this->returnValue('/i/am/a/php/static/path'));
 
-        $this->assertEquals('php_e9a486d6d5fc2ecee393a8e810962e1e', $dictionaryStub->getId());
-
-        $dictionaryStub->setMustStartWordDefault(true);
-        $this->assertEquals('php_6afbe8c88077c36a8f2f2f631268070b', $dictionaryStub->getId());
-
-        $dictionaryStub->setMustEndWordDefault(true);
         $this->assertEquals('php_e8f4fa15dc2aeada588130fb270854e0', $dictionaryStub->getId());
+
+        $dictionaryStub->setMustStartWordDefault(false);
+        $this->assertEquals('php_f7ad03e1f2fa33a25edd5597c2cd5263', $dictionaryStub->getId());
+
+        $dictionaryStub->setMustEndWordDefault(false);
+        $this->assertEquals('php_e9a486d6d5fc2ecee393a8e810962e1e', $dictionaryStub->getId());
     }
 
     public function dataProviderGetWords()

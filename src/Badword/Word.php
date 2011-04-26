@@ -40,7 +40,7 @@ class Word
      * @param boolean $mustStartWord Whether the bad word must start a word.
      * @param boolean $mustEndWord Whether the bad word must end a word.
      */
-    public function __construct($word, $mustStartWord = false, $mustEndWord = false)
+    public function __construct($word, $mustStartWord = true, $mustEndWord = true)
     {
         $this->setWord($word);
         $this->setMustStartWord($mustStartWord);

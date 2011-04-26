@@ -40,13 +40,13 @@ class CsvTest extends \PHPUnit_Framework_TestCase
                        ->method('getPath')
                        ->will($this->returnValue('/i/am/a/csv/static/path'));
 
-        $this->assertEquals('csv_56c37148695fefc44c177cd4551d78cf', $dictionaryStub->getId());
-
-        $dictionaryStub->setMustStartWordDefault(true);
-        $this->assertEquals('csv_d632194be0b9cd9f9238a49401cdb8f6', $dictionaryStub->getId());
-
-        $dictionaryStub->setMustEndWordDefault(true);
         $this->assertEquals('csv_d0a1f2faed8ce6f4586315b32e8e4755', $dictionaryStub->getId());
+
+        $dictionaryStub->setMustStartWordDefault(false);
+        $this->assertEquals('csv_c41aff8463fb2194147532208a25a596', $dictionaryStub->getId());
+
+        $dictionaryStub->setMustEndWordDefault(false);
+        $this->assertEquals('csv_56c37148695fefc44c177cd4551d78cf', $dictionaryStub->getId());
     }
 
     public function dataProviderGetWords()

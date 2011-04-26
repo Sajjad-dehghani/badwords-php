@@ -27,18 +27,18 @@ class WordTest extends \PHPUnit_Framework_TestCase
     {
         $word = new Word('foobar');
         $this->assertEquals('foobar', $word->getWord());
-        $this->assertFalse($word->getMustStartWord());
-        $this->assertFalse($word->getMustEndWord());
-
-        $word = new Word('foobar', true);
-        $this->assertEquals('foobar', $word->getWord());
         $this->assertTrue($word->getMustStartWord());
-        $this->assertFalse($word->getMustEndWord());
+        $this->assertTrue($word->getMustEndWord());
 
-        $word = new Word('foobar', false, true);
+        $word = new Word('foobar', false);
         $this->assertEquals('foobar', $word->getWord());
         $this->assertFalse($word->getMustStartWord());
         $this->assertTrue($word->getMustEndWord());
+
+        $word = new Word('foobar', true, false);
+        $this->assertEquals('foobar', $word->getWord());
+        $this->assertTrue($word->getMustStartWord());
+        $this->assertFalse($word->getMustEndWord());
     }
 
     public function dataProviderSettingWord()
