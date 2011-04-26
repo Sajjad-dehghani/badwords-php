@@ -46,7 +46,8 @@ class Standard extends Config
             new Character('c', array('*')),
             new Character('h', array('*')),
             new Character('l', array('1')),
-            new Character('s', array('5', '$'), 2)
+            new Character('s', array('5', '$'), 2),
+            new Character('t', array('4', '+'))
         ));
 
         // Whitespace

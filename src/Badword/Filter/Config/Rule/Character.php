@@ -154,7 +154,7 @@ class Character extends AbstractCharacter
         {
             // Add detection for them
             $alternativeCharacters = array_merge(array($this->getCharacter()), $this->getAlternativeCharacters());
-            $alternativeCharacters = preg_replace('/(\*|\?|\$|\^)/iu', '\\\$1', implode('|', $alternativeCharacters));
+            $alternativeCharacters = preg_replace('/(\+|\*|\?|\$|\^)/iu', '\\\$1', implode('|', $alternativeCharacters));
             $regExp = preg_replace(sprintf('/%s/ui', $this->getCharacter()), '('.$alternativeCharacters.')', $regExp);
         }
 
