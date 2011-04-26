@@ -227,7 +227,7 @@ class Filter
 
         foreach($content as $key => $string)
         {
-            if(!(is_string($string) && strlen(trim($string)) > 0))
+            if(!(is_string($string) && mb_strlen(trim($string)) > 0))
             {
                 throw new \InvalidArgumentException(sprintf(
                     'Invalid content%s. Please provide a non-empty string.',

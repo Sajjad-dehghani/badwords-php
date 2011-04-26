@@ -174,7 +174,7 @@ class Result
      */
     public function setHighlightedContentBadwordClass($class)
     {
-        if(!(is_string($class) && strlen(trim($class)) > 0))
+        if(!(is_string($class) && mb_strlen(trim($class)) > 0))
         {
             throw new \InvalidArgumentException('Invalid highlight CSS class "%s". Please provide a non-empty string.', $class);
         }
@@ -202,7 +202,7 @@ class Result
      */
     public function setHighlightedContentRiskLevelClassSuffix($class)
     {
-        if(!(is_string($class) && strlen(trim($class)) > 0))
+        if(!(is_string($class) && mb_strlen(trim($class)) > 0))
         {
             throw new \InvalidArgumentException('Invalid highlight risk level CSS class suffix "%s". Please provide a non-empty string.', $class);
         }
