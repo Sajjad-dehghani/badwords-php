@@ -19,7 +19,7 @@ use Badword\Word;
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
-class MustEndWord implements Rule
+class MustEndWord extends MustStartWord
 {
     /**
      * {@inheritdoc}
@@ -30,7 +30,7 @@ class MustEndWord implements Rule
         if($word->getMustEndWord())
         {
             // Add word boundary detection
-            $regExp = $regExp.'\b';
+            $regExp = $regExp.'($|'.static::REGEXP.')';
         }
 
         return $regExp;

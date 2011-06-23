@@ -21,6 +21,8 @@ use Badword\Word;
  */
 class MustStartWord implements Rule
 {
+    const REGEXP = '\s|\b|[-_\.\:\'"]';
+    
     /**
      * {@inheritdoc}
      */
@@ -30,7 +32,7 @@ class MustStartWord implements Rule
         if($word->getMustStartWord())
         {
             // Add word boundary detection
-            $regExp = '\b'.$regExp;
+            $regExp = '(^|'.static::REGEXP.')'.$regExp;
         }
 
         return $regExp;

@@ -32,7 +32,7 @@ class MustEndWordTest extends \PHPUnit_Framework_TestCase
         $wordStub2->setMustEndWord(false);
 
         return array(
-            array($wordStub1, 'bazaars\b'),
+            array($wordStub1, 'bazaars($|'.MustEndWord::REGEXP.')'),
             array($wordStub2, 'bazaars'),
         );
     }

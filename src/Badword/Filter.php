@@ -14,6 +14,7 @@ namespace Badword;
 use Badword\Cache;
 use Badword\Cache\None;
 use Badword\Filter\Config;
+use Badword\Filter\Config\Rule\MustStartWord;
 use Badword\Filter\Result;
 
 /**
@@ -292,9 +293,16 @@ class Filter
                 }
             }
 
-            // If matches were found, store them against the Dictionary ID
+            // If matches were found
             if($dictionaryMatches)
             {
+                // Remove rougue characters at the beginning/end of the matches
+                foreach($dictionaryMatches as $key => $dictionaryMatch)
+                {
+                    $dictionaryMatches[$key] = preg_replace('/^('.MustStartWord::REGEXP.')|('.MustStartWord::REGEXP.')$/iu', '', $dictionaryMatch);
+                }
+
+                // Store them against the Dictionary ID
                 $matches[$dictionary->getId()] = array_values(array_unique($dictionaryMatches));
             }
         }
