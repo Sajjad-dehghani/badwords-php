@@ -219,16 +219,27 @@ class Result
     public function getHighlightedContent()
     {
         $content = htmlentities($this->getContent());
+        
+        $replacements = array();
 
         foreach($this->getMatchesAndRiskLevels() as $match => $riskLevel)
         {
             $replacement = sprintf(
-                '<span class="%s%s">$1</span>',
+                '<span class="%s%s">%s</span>',
                 $this->getHighlightedContentBadwordClass(),
-                ($riskLevel !== null ? ' '.$this->getHighlightedContentRiskLevelClassSuffix().$riskLevel : null)
+                ($riskLevel !== null ? ' '.$this->getHighlightedContentRiskLevelClassSuffix().$riskLevel : null), 
+                $match
             );
-
-            $content = preg_replace('/('.$match.')/iu', $replacement, $content);
+            
+            $placeholder = '{#{#{'.count($replacements).'}#}#}';
+            
+            $replacements[$placeholder] = $replacement;
+            $content = preg_replace('/'.$match.'/iu', $placeholder, $content);
+        }
+        
+        foreach($replacements as $placeholder => $replacement)
+        {
+            $content = str_replace($placeholder, $replacement, $content);
         }
 
         return $content;
