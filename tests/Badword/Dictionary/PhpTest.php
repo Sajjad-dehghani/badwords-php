@@ -39,6 +39,9 @@ class PhpTest extends \PHPUnit_Framework_TestCase
         $dictionaryStub->expects($this->any())
                        ->method('getPath')
                        ->will($this->returnValue('/i/am/a/php/static/path'));
+        
+        $dictionaryStub->setMustStartWordDefault(true);
+        $dictionaryStub->setMustEndWordDefault(true);
 
         $this->assertEquals('php_e8f4fa15dc2aeada588130fb270854e0', $dictionaryStub->getId());
 

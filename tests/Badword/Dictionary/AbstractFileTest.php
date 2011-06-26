@@ -80,6 +80,9 @@ class AbstractFileTest extends \PHPUnit_Framework_TestCase
                         ->method('getPath')
                         ->will($this->returnValue('/i/am/a/static/path'));
         
+        $dictionaryStub->setMustStartWordDefault(true);
+        $dictionaryStub->setMustEndWordDefault(true);
+        
         $this->assertEquals('mock_b7b43ae4d94bbf7a6fa92f96c99377f2', $dictionaryStub->getId());
 
         $dictionaryStub->setMustStartWordDefault(false);

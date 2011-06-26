@@ -31,12 +31,12 @@ abstract class AbstractDictionary implements Dictionary
     /**
      * @var boolean
      */
-    protected $mustEndWordDefault = true;
+    protected $mustEndWordDefault = false;
 
     /**
      * @var boolean
      */
-    protected $mustStartWordDefault = true;
+    protected $mustStartWordDefault = false;
 
     /**
      * @var integer

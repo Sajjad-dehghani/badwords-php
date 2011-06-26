@@ -39,6 +39,9 @@ class CsvTest extends \PHPUnit_Framework_TestCase
         $dictionaryStub->expects($this->any())
                        ->method('getPath')
                        ->will($this->returnValue('/i/am/a/csv/static/path'));
+        
+        $dictionaryStub->setMustStartWordDefault(true);
+        $dictionaryStub->setMustEndWordDefault(true);
 
         $this->assertEquals('csv_d0a1f2faed8ce6f4586315b32e8e4755', $dictionaryStub->getId());
 
