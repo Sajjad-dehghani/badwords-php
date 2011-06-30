@@ -25,7 +25,6 @@ use Badword\Filter\Result;
 class Filter
 {
     const REGEXP_MAX_LENGTH = 3000;
-    const REGEXP_MAX_WORDS = 98;
 
     /**
      * @var Cache
@@ -268,48 +267,25 @@ class Filter
             // Loop through the regular expressions
             foreach($this->getDictionaryRegExps($dictionary) as $regExp)
             {
-                $regExpMatches = array();
-                $regExpOffset = 0;
-                $count = 0;
-                
-                // Loop through the string to find all matches
-                while(preg_match('/'.$regExp.'/iu', $string, $regExpMatch, PREG_OFFSET_CAPTURE, $regExpOffset))
+                // Run the regular expression on the string and process any matches found
+                if(preg_match_all('/'.$regExp.'/iu', $string, $regExpMatches))
                 {
-                    // Get the index of the result array that contains our actual match
-                    $index = count($regExpMatch) - 1;
-                    
-                    // Store it
-                    array_push($regExpMatches, $regExpMatch[$index][0]);
-                    $regExpOffset = $regExpMatch[$index][1] + mb_strlen($regExpMatch[$index][0]);
-                    
-                    // If the MustStartEndWord Rule was used, we need to take into 
-                    // account the "greedy" matching it does for the word boundaries
-                    // and reset the offset to accomodate
-                    if($index !== 0)
+                    // If there's a whitelist, only store each match if it isn't in there
+                    if($this->getConfig()->getWhitelistedWords())
                     {
-                        if($regExpMatch[$index][0] !== $regExpMatch[0][0] && 
-                           mb_strpos($regExpMatch[0][0], $regExpMatch[$index][0]) !== mb_strlen($regExpMatch[0][0]) - mb_strlen($regExpMatch[$index][0]))
+                        foreach($regExpMatches[0] as $regExpMatch)
                         {
-                            $regExpOffset--;
+                            if(!in_array(mb_strtolower(trim($regExpMatch)), $this->getConfig()->getWhitelistedWords()))
+                            {
+                                array_push($dictionaryMatches, $regExpMatch);
+                            }
                         }
                     }
-                }
-                
-                // If there's a whitelist, only store each match if it isn't in there
-                if($this->getConfig()->getWhitelistedWords())
-                {
-                    foreach($regExpMatches as $regExpMatch)
+                    // Otherwise just straight store the matches
+                    else
                     {
-                        if(!in_array(mb_strtolower(trim($regExpMatch)), $this->getConfig()->getWhitelistedWords()))
-                        {
-                            array_push($dictionaryMatches, $regExpMatch);
-                        }
+                        $dictionaryMatches = array_merge($dictionaryMatches, $regExpMatches[0]);
                     }
-                }
-                // Otherwise just straight store the matches
-                else
-                {
-                    $dictionaryMatches = array_merge($dictionaryMatches, $regExpMatches);
                 }
             }
 
@@ -403,20 +379,17 @@ class Filter
         }
 
         $regExps = array();
-        $count = 0;
         $totalLength = 0;
 
         // Group the regular expressions to be concatenated
-        // Each group must not exceed a total Word count of REGEXP_MAX_WORDS
-        // or a total string length of REGEXP_MAX_LENGTH
+        // Each group must not exceed the total string length of REGEXP_MAX_LENGTH
         foreach($wordRegExps as $wordRegExp)
         {
             $wordRegExp = '(?:'.$wordRegExp.')';
             
-            $count++;
             $totalLength += mb_strlen($wordRegExp);
 
-            $index = max(array(ceil($count / self::REGEXP_MAX_WORDS), ceil($totalLength / self::REGEXP_MAX_LENGTH))) - 1;
+            $index = ceil($totalLength / self::REGEXP_MAX_LENGTH) - 1;
             if(!isset($regExps[$index]))
             {
                 $regExps[$index] = array();

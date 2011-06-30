@@ -37,10 +37,10 @@ class MustStartEndWordTest extends \PHPUnit_Framework_TestCase
         $wordStub4->setMustEndWord(true);
 
         return array(
-            array($wordStub1, '(bazaars)'),
-            array($wordStub2, '(?:^|'.MustStartEndWord::REGEXP.')(bazaars)'),
-            array($wordStub3, '(bazaars)(?:$|'.MustStartEndWord::REGEXP.')'),
-            array($wordStub4, '(?:^|'.MustStartEndWord::REGEXP.')(bazaars)(?:$|'.MustStartEndWord::REGEXP.')'),
+            array($wordStub1, 'bazaars'),
+            array($wordStub2, '(?<=^|'.MustStartEndWord::REGEXP.')bazaars'),
+            array($wordStub3, 'bazaars(?=$|'.MustStartEndWord::REGEXP.')'),
+            array($wordStub4, '(?<=^|'.MustStartEndWord::REGEXP.')bazaars(?=$|'.MustStartEndWord::REGEXP.')'),
         );
     }
 
@@ -86,40 +86,37 @@ class MustStartEndWordTest extends \PHPUnit_Framework_TestCase
         $data = array();
         
         array_push($data, array($wordStub1, 'start'.$wordStub1->getWord()));
-        array_push($data, array($wordStub1, $wordStub1->getWord(), $wordStub1->getWord(), $wordStub1->getWord()));
+        array_push($data, array($wordStub1, $wordStub1->getWord(), $wordStub1->getWord()));
        
         foreach($boundaries as $boundary)
         {
             array_push($data, array(
                 $wordStub1, 
                 'lorem'.$boundary.$wordStub1->getWord(), 
-                $boundary.$wordStub1->getWord(), 
                 $wordStub1->getWord()
             ));
         }
         
         array_push($data, array($wordStub2, $wordStub2->getWord().'end'));
-        array_push($data, array($wordStub2, $wordStub2->getWord(), $wordStub2->getWord(), $wordStub2->getWord()));
+        array_push($data, array($wordStub2, $wordStub2->getWord(), $wordStub2->getWord()));
        
         foreach($boundaries as $boundary)
         {
             array_push($data, array(
                 $wordStub2, 
                 $wordStub2->getWord().$boundary.'ipsum', 
-                $wordStub2->getWord().$boundary, 
                 $wordStub2->getWord()
             ));
         }
         
         array_push($data, array($wordStub3, 'start'.$wordStub3->getWord().'end'));
-        array_push($data, array($wordStub3, $wordStub3->getWord(), $wordStub3->getWord(), $wordStub3->getWord()));
+        array_push($data, array($wordStub3, $wordStub3->getWord(), $wordStub3->getWord()));
        
         foreach($boundaries as $boundary)
         {
             array_push($data, array(
                 $wordStub3, 
                 'lorem'.$boundary.$wordStub3->getWord().$boundary.'ipsum', 
-                $boundary.$wordStub3->getWord().$boundary, 
                 $wordStub3->getWord()
             ));
         }
@@ -130,16 +127,15 @@ class MustStartEndWordTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProviderRegExp
      */
-    public function testRegExp(Word $word, $string, $expectedFullMatch = null, $expectedFullWordMatch = null)
+    public function testRegExp(Word $word, $string, $expectedResult = null)
     {
         $regExp = $this->ruleStub->apply($word->getWord(), $word);
         
-        $this->assertEquals(($expectedFullMatch !== null ? 1 : 0), preg_match_all('/'.$regExp.'/iu', $string, $matches));
-        if($expectedFullMatch !== null)
+        $this->assertEquals(($expectedResult !== null ? 1 : 0), preg_match_all('/'.$regExp.'/iu', $string, $matches));
+        if($expectedResult !== null)
         {
-            $this->assertEquals(2, count($matches));
-            $this->assertEquals(array($expectedFullMatch), $matches[0]);
-            $this->assertEquals(array($expectedFullWordMatch), $matches[1]);
+            $this->assertEquals(1, count($matches));
+            $this->assertEquals(array($expectedResult), $matches[0]);
         }
     }
 }

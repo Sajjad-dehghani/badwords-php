@@ -29,19 +29,16 @@ class MustStartEndWord implements Rule
      */
     public function apply($regExp, Word $word)
     {
-        // Group the regular expression (used later in the filter)
-        $regExp = '(' . $regExp . ')';
-        
         // If the Word must exist at the start of a word only, add word boundary detection
         if($word->getMustStartWord())
         {
-            $regExp = '(?:^|' . static::REGEXP . ')' . $regExp;
+            $regExp = '(?<=^|' . static::REGEXP . ')' . $regExp;
         }
         
         // If the Word must exist at the end of a word only, add word boundary detection
         if($word->getMustEndWord())
         {
-            $regExp .= '(?:$|' . static::REGEXP . ')';
+            $regExp .= '(?=$|' . static::REGEXP . ')';
         }
         
         return $regExp;
