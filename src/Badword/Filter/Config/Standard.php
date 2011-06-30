@@ -13,8 +13,7 @@ namespace Badword\Filter\Config;
 
 use Badword\Filter\Config;
 use Badword\Filter\Config\Rule\Character;
-use Badword\Filter\Config\Rule\MustStartWord;
-use Badword\Filter\Config\Rule\MustEndWord;
+use Badword\Filter\Config\Rule\MustStartEndWord;
 use Badword\Filter\Config\Rule\Whitespace;
 
 /**
@@ -54,9 +53,6 @@ class Standard extends Config
         $this->addRule(new Whitespace(array('!', '?')));
 
         // Start/End Word
-        $this->addPostRules(array(
-            new MustStartWord(),
-            new MustEndWord()
-        ));
+        $this->addPostRule(new MustStartEndWord());
     }
 }

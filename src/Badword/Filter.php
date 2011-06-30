@@ -25,7 +25,7 @@ use Badword\Filter\Result;
 class Filter
 {
     const REGEXP_MAX_LENGTH = 3000;
-    const REGEXP_MAX_WORDS = 49;
+    const REGEXP_MAX_WORDS = 98;
 
     /**
      * @var Cache
@@ -259,9 +259,6 @@ class Filter
     protected function filterString($string)
     {
         $matches = array();
-        $leadingCharacterIndexStart = $this->getConfig()->hasMustStartWordRule() ? 1 : null;
-        $trailingCharacterIndexStart = $this->getConfig()->hasMustEndWordRule() ? $leadingCharacterIndex + 1 : null;
-        $characterIndexIncrement = $trailingCharacterIndexStart;
 
         // For each Dictionary
         foreach($this->getDictionaries() as $dictionary)
@@ -271,59 +268,48 @@ class Filter
             // Loop through the regular expressions
             foreach($this->getDictionaryRegExps($dictionary) as $regExp)
             {
-                // Run the regular expression on the string and process any matches found
-                if(preg_match_all('/'.$regExp.'/iu', $string, $regExpMatches))
+                $regExpMatches = array();
+                $regExpOffset = 0;
+                $count = 0;
+                
+                // Loop through the string to find all matches
+                while(preg_match('/'.$regExp.'/iu', $string, $regExpMatch, PREG_OFFSET_CAPTURE, $regExpOffset))
                 {
-                    // If the MustStartWord or MustEndWord rule was used
-                    if($this->getConfig()->hasMustStartWordRule() || $this->getConfig()->hasMustEndWordRule())
-                    {
-                        // Loop through the matches found and remove leading/trailing characters
-                        foreach($regExpMatches[0] as $index => $regExpMatch)
-                        {
-                            // If a MustStartWord Rule was used, remove the trailing character if present
-                            if($leadingCharacterIndexStart)
-                            {
-                                for($i = $leadingCharacterIndexStart; $i <= 99; $i += $characterIndexIncrement)
-                                {
-                                    if(isset($regExpMatches[$i]) && !empty($regExpMatches[$i][$index]))
-                                    {
-                                        $regExpMatches[0][$index] = substr($regExpMatches[0][$index], 1);
-                                        break;
-                                    }
-                                }
-                            }
-
-                            // If a MustEndWord Rule was used, remove the trailing character if present
-                            if($trailingCharacterIndexStart)
-                            {
-                                for($i = $trailingCharacterIndexStart; $i <= 99; $i += $characterIndexIncrement)
-                                {
-                                    if(isset($regExpMatches[$i]) && !empty($regExpMatches[$i][$index]))
-                                    {
-                                        $regExpMatches[0][$index] = substr($regExpMatches[0][$index], 0, -1);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    // Get the index of the result array that contains our actual match
+                    $index = count($regExpMatch) - 1;
                     
-                    // If there's a whitelist, only store each match if it isn't in there
-                    if($this->getConfig()->getWhitelistedWords())
+                    // Store it
+                    array_push($regExpMatches, $regExpMatch[$index][0]);
+                    $regExpOffset = $regExpMatch[$index][1] + mb_strlen($regExpMatch[$index][0]);
+                    
+                    // If the MustStartEndWord Rule was used, we need to take into 
+                    // account the "greedy" matching it does for the word boundaries
+                    // and reset the offset to accomodate
+                    if($index !== 0)
                     {
-                        foreach($regExpMatches[0] as $regExpMatch)
+                        if($regExpMatch[$index][0] !== $regExpMatch[0][0] && 
+                           mb_strpos($regExpMatch[0][0], $regExpMatch[$index][0]) !== mb_strlen($regExpMatch[0][0]) - mb_strlen($regExpMatch[$index][0]))
                         {
-                            if(!in_array(mb_strtolower(trim($regExpMatch)), $this->getConfig()->getWhitelistedWords()))
-                            {
-                                array_push($dictionaryMatches, $regExpMatch);
-                            }
+                            $regExpOffset--;
                         }
                     }
-                    // Otherwise just straight store the matches
-                    else
+                }
+                
+                // If there's a whitelist, only store each match if it isn't in there
+                if($this->getConfig()->getWhitelistedWords())
+                {
+                    foreach($regExpMatches as $regExpMatch)
                     {
-                        $dictionaryMatches = array_merge($dictionaryMatches, $regExpMatches[0]);
+                        if(!in_array(mb_strtolower(trim($regExpMatch)), $this->getConfig()->getWhitelistedWords()))
+                        {
+                            array_push($dictionaryMatches, $regExpMatch);
+                        }
                     }
+                }
+                // Otherwise just straight store the matches
+                else
+                {
+                    $dictionaryMatches = array_merge($dictionaryMatches, $regExpMatches);
                 }
             }
 

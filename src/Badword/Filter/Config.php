@@ -12,8 +12,7 @@
 namespace Badword\Filter;
 
 use Badword\Filter\Config\Rule;
-use Badword\Filter\Config\Rule\MustEndWord;
-use Badword\Filter\Config\Rule\MustStartWord;
+use Badword\Filter\Config\Rule\MustStartEndWord;
 use Badword\Word;
 
 /**
@@ -24,16 +23,6 @@ use Badword\Word;
  */
 class Config
 {
-    /**
-     * @var boolean
-     */
-    protected $hasMustStartWordRule;
-    
-    /**
-     * @var boolean
-     */
-    protected $hasMustEndWordRule;
-    
     /**
      * @var array
      */
@@ -285,8 +274,6 @@ class Config
         }
 
         $stack = array();
-        $this->hasMustStartWordRule = null;
-        $this->hasMustEndWordRule = null;
 
         foreach($rules as $rule)
         {
@@ -294,56 +281,6 @@ class Config
         }
 
         return $this;
-    }
-    
-    /**
-     * Determines if the MustStartWord Rule has been added to the Config.
-     * 
-     * @return boolean 
-     */
-    public function hasMustStartWordRule()
-    {
-        if($this->hasMustStartWordRule === null)
-        {
-            $this->hasMustStartWordRule = false;
-            $rules = array_merge($this->getPreRules(), $this->getRules(), $this->getPostRules());
-            
-            foreach($rules as $rule)
-            {
-                if($rule instanceof MustStartWord)
-                {
-                    $this->hasMustStartWordRule = true;
-                    break;
-                }
-            }
-        }
-        
-        return $this->hasMustStartWordRule;
-    }
-    
-    /**
-     * Determines if the MustEndWord Rule has been added to the Config.
-     * 
-     * @return boolean 
-     */
-    public function hasMustEndWordRule()
-    {
-        if($this->hasMustEndWordRule === null)
-        {
-            $this->hasMustEndWordRule = false;
-            $rules = array_merge($this->getPreRules(), $this->getRules(), $this->getPostRules());
-            
-            foreach($rules as $rule)
-            {
-                if($rule instanceof MustEndWord)
-                {
-                    $this->hasMustEndWordRule = true;
-                    break;
-                }
-            }
-        }
-        
-        return $this->hasMustEndWordRule;
     }
 
     /**

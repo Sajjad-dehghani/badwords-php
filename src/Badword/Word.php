@@ -21,12 +21,12 @@ class Word
     /**
      * @var boolean
      */
-    protected $mustEndWord;
+    protected $mustStartWord;
     
     /**
      * @var boolean
      */
-    protected $mustStartWord;
+    protected $mustEndWord;
     
     /**
      * @var string
@@ -37,8 +37,8 @@ class Word
      * Constructs a new Word.
      * 
      * @param string $word The bad word.
-     * @param boolean $mustStartWord Whether the bad word must start a word.
-     * @param boolean $mustEndWord Whether the bad word must end a word.
+     * @param boolean $mustStartWord Whether the bad word must exist at the start of a word only.
+     * @param boolean $mustEndWord Whether the bad word must exist at the end of a word only.
      */
     public function __construct($word, $mustStartWord = false, $mustEndWord = false)
     {
@@ -48,35 +48,7 @@ class Word
     }
 
     /**
-     * Gets whether the bad word must end a word.
-     * 
-     * @return boolean
-     */
-    public function getMustEndWord()
-    {
-        return $this->mustEndWord;
-    }
-
-    /**
-     * Sets whether the bad word must end a word.
-     *
-     * @param boolean $mustEndWord
-     *
-     * @return Word
-     */
-    public function setMustEndWord($mustEndWord)
-    {
-        if(!(is_bool($mustEndWord)))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid must end word "%s". Expected boolean.', $mustEndWord));
-        }
-
-        $this->mustEndWord = $mustEndWord;
-        return $this;
-    }
-
-    /**
-     * Gets whether the bad word must start a word.
+     * Gets whether the bad word must exist at the start of a word only.
      *
      * @return boolean
      */
@@ -86,7 +58,7 @@ class Word
     }
 
     /**
-     * Sets whether the bad word must start a word.
+     * Sets whether the bad word must exist at the start of a word only.
      *
      * @param boolean $mustEndWord
      *
@@ -100,6 +72,34 @@ class Word
         }
 
         $this->mustStartWord = $mustStartWord;
+        return $this;
+    }
+    
+    /**
+     * Gets whether the bad word must exist at the end of a word only.
+     * 
+     * @return boolean
+     */
+    public function getMustEndWord()
+    {
+        return $this->mustEndWord;
+    }
+
+    /**
+     * Sets whether the bad word must exist at the end of a word only.
+     *
+     * @param boolean $mustEndWord
+     *
+     * @return Word
+     */
+    public function setMustEndWord($mustEndWord)
+    {
+        if(!(is_bool($mustEndWord)))
+        {
+            throw new \InvalidArgumentException(sprintf('Invalid must end word "%s". Expected boolean.', $mustEndWord));
+        }
+
+        $this->mustEndWord = $mustEndWord;
         return $this;
     }
 
