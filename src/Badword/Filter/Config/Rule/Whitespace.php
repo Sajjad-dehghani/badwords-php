@@ -34,7 +34,7 @@ class Whitespace extends AbstractCharacter
             // Add detection for them
             $alternativeCharacters = array_merge(array('\s'), $this->getAlternativeCharacters());
             $alternativeCharacters = preg_replace('/(\+|\*|\?|\$|\^)/iu', '\\\$1', implode('|', $alternativeCharacters));
-            $regExp = preg_replace('/\\\s/ui', '('.$alternativeCharacters.')', $regExp);
+            $regExp = preg_replace('/\\\s/ui', '(?:'.$alternativeCharacters.')', $regExp);
         }
 
         return $regExp;

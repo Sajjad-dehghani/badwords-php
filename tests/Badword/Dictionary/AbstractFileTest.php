@@ -32,8 +32,8 @@ class AbstractFileTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->dictionaryStub->expects($this->any())
-                        ->method('getFileType')
-                        ->will($this->returnValue('mock'));
+                             ->method('getFileType')
+                             ->will($this->returnValue('mock'));
     }
 
     public function dataProviderSettingPath()

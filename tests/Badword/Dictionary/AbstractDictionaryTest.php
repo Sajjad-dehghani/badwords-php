@@ -33,12 +33,12 @@ class AbstractDictionaryTest extends \PHPUnit_Framework_TestCase
         $this->dictionaryStub = $this->getMock('\Badword\Dictionary\AbstractDictionary', array('loadWordsDataFromSource', 'getId'));
 
         $this->dictionaryStub->expects($this->any())
-                        ->method('getId')
-                        ->will($this->returnValue('mock_dictionary'));
+             ->method('getId')
+             ->will($this->returnValue('mock_dictionary'));
 
         $this->dictionaryStub->expects($this->any())
-                        ->method('loadWordsDataFromSource')
-                        ->will($this->returnValue(static::$wordsData));
+             ->method('loadWordsDataFromSource')
+             ->will($this->returnValue(static::$wordsData));
     }
     
     public function testGetCache()

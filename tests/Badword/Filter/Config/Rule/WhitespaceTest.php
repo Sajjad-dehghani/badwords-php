@@ -42,10 +42,10 @@ class WhitespaceTest extends \PHPUnit_Framework_TestCase
         return array(
             array($wordStub1, 'some\s*phrase'),
             array($wordStub2, 'some\s*other\s*phrase'),
-            array($wordStub1, 'some(\s|!)*phrase', array('!')),
-            array($wordStub2, 'some(\s|!)*other(\s|!)*phrase', array('!')),
-            array($wordStub1, 'some(\s|!|\*)*phrase', array('!', '*')),
-            array($wordStub2, 'some(\s|!|\*)*other(\s|!|\*)*phrase', array('!', '*'))
+            array($wordStub1, 'some(?:\s|!)*phrase', array('!')),
+            array($wordStub2, 'some(?:\s|!)*other(?:\s|!)*phrase', array('!')),
+            array($wordStub1, 'some(?:\s|!|\*)*phrase', array('!', '*')),
+            array($wordStub2, 'some(?:\s|!|\*)*other(?:\s|!|\*)*phrase', array('!', '*'))
         );
     }
 

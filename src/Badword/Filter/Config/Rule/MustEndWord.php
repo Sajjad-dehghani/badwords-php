@@ -26,13 +26,7 @@ class MustEndWord extends MustStartWord
      */
     public function apply($regExp, Word $word)
     {
-        // If the Word must exist at the end of a word only
-        if($word->getMustEndWord())
-        {
-            // Add word boundary detection
-            $regExp = $regExp.'($|'.static::REGEXP.')';
-        }
-
-        return $regExp;
+        // If the Word must exist at the end of a word only, add word boundary detection
+        return $regExp . '(' . ($word->getMustEndWord() ? '$|' . static::REGEXP : null) . ')';
     }
 }

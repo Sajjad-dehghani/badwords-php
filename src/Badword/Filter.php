@@ -25,6 +25,7 @@ use Badword\Filter\Result;
 class Filter
 {
     const REGEXP_MAX_LENGTH = 3000;
+    const REGEXP_MAX_WORDS = 49;
 
     /**
      * @var Cache
@@ -258,25 +259,43 @@ class Filter
     protected function filterString($string)
     {
         $matches = array();
+        $leadingCharacterIndex = $this->getConfig()->hasMustStartWordRule() ? 1 : null;
+        $trailingCharacterIndex = $this->getConfig()->hasMustEndWordRule() ? $leadingCharacterIndex + 1 : null;
 
         // For each Dictionary
         foreach($this->getDictionaries() as $dictionary)
         {
             $dictionaryMatches = array();
 
-            // Get the regular expressions
-            $regExps = $this->getDictionaryRegExps($dictionary);
-
-            // Run each one on the string
-            foreach($regExps as $regExp)
+            // Loop through the regular expressions
+            foreach($this->getDictionaryRegExps($dictionary) as $regExp)
             {
-                // If matches are found
+                // Run the regular expression on the string and process any matches found
                 if(preg_match_all('/'.$regExp.'/iu', $string, $regExpMatches))
                 {
-                    // If there are whitelisted words
+                    // If the MustStartWord or MustEndWord rule was used
+                    if($this->getConfig()->hasMustStartWordRule() || $this->getConfig()->hasMustEndWordRule())
+                    {
+                        // Loop through the matches found and remove leading/trailing characters
+                        foreach($regExpMatches[0] as $index => $regExpMatch)
+                        {
+                            // If a MustStartWord Rule was used, remove the trailing character if present
+                            if($leadingCharacterIndex && isset($regExpMatches[$leadingCharacterIndex]) && !empty($regExpMatches[$leadingCharacterIndex][$index]))
+                            {
+                                $regExpMatches[0][$index] = substr($regExpMatches[0][$index], 1);
+                            }
+
+                            // If a MustEndWord Rule was used, remove the trailing character if present
+                            if($trailingCharacterIndex && isset($regExpMatches[$trailingCharacterIndex]) && !empty($regExpMatches[$trailingCharacterIndex][$index]))
+                            {
+                                $regExpMatches[0][$index] = substr($regExpMatches[0][$index], 0, mb_strlen($regExpMatches[0][$index]) - 1);
+                            }
+                        }
+                    }
+                    
+                    // If there's a whitelist, only store each match if it isn't in there
                     if($this->getConfig()->getWhitelistedWords())
                     {
-                        // Only store each match if it isn't in the whitelist
                         foreach($regExpMatches[0] as $regExpMatch)
                         {
                             if(!in_array(mb_strtolower(trim($regExpMatch)), $this->getConfig()->getWhitelistedWords()))
@@ -285,7 +304,7 @@ class Filter
                             }
                         }
                     }
-                    // Otherwise just straight store them
+                    // Otherwise just straight store the matches
                     else
                     {
                         $dictionaryMatches = array_merge($dictionaryMatches, $regExpMatches[0]);
@@ -293,16 +312,9 @@ class Filter
                 }
             }
 
-            // If matches were found
+            // Store any matches found against the Dictionary ID
             if($dictionaryMatches)
             {
-                // Remove rougue characters at the beginning/end of the matches
-                foreach($dictionaryMatches as $key => $dictionaryMatch)
-                {
-                    $dictionaryMatches[$key] = preg_replace('/^('.MustStartWord::REGEXP.')|('.MustStartWord::REGEXP.')$/iu', '', $dictionaryMatch);
-                }
-
-                // Store them against the Dictionary ID
                 $matches[$dictionary->getId()] = array_values(array_unique($dictionaryMatches));
             }
         }
@@ -390,17 +402,20 @@ class Filter
         }
 
         $regExps = array();
+        $count = 0;
         $totalLength = 0;
 
-        // Group the regular expressions to be concatenated with a maximum
-        // length of REGEXP_MAX_LENGTH for each concatenation
+        // Group the regular expressions to be concatenated
+        // Each group must not exceed a total Word count of REGEXP_MAX_WORDS
+        // or a total string length of REGEXP_MAX_LENGTH
         foreach($wordRegExps as $wordRegExp)
         {
-            $wordRegExp = '('.$wordRegExp.')';
-
+            $wordRegExp = '(?:'.$wordRegExp.')';
+            
+            $count++;
             $totalLength += mb_strlen($wordRegExp);
 
-            $index = ceil($totalLength / self::REGEXP_MAX_LENGTH) - 1;
+            $index = max(array(ceil($count / self::REGEXP_MAX_WORDS), ceil($totalLength / self::REGEXP_MAX_LENGTH))) - 1;
             if(!isset($regExps[$index]))
             {
                 $regExps[$index] = array();

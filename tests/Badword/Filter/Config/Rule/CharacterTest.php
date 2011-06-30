@@ -108,17 +108,17 @@ class CharacterTest extends \PHPUnit_Framework_TestCase
 
         return array(
             array($wordStub1, 'baza{2}rs', 'a'),
-            array($wordStub1, 'ba(z|@)aars', 'z', array('@')),
-            array($wordStub1, 'ba(z|@|\*)aars', 'z', array('@', '*')),
+            array($wordStub1, 'ba(?:z|@)aars', 'z', array('@')),
+            array($wordStub1, 'ba(?:z|@|\*)aars', 'z', array('@', '*')),
             array($wordStub1, 'ba+za{2,}rs', 'a', array(), true),
             array($wordStub1, 'baza{2,}rs', 'a', array(), 2),
             array($wordStub1, 'baza{2}rs', 'a', array(), 3),
-            array($wordStub1, 'b(a|@)+z(a|@){2,}rs', 'a', array('@'), true),
-            array($wordStub1, 'b(a|@|\*)+z(a|@|\*){2,}rs', 'a', array('@', '*'), true),
-            array($wordStub1, 'b(a|@)z(a|@){2,}rs', 'a', array('@'), 2),
-            array($wordStub1, 'b(a|@|\*)z(a|@|\*){2,}rs', 'a', array('@', '*'), 2),
-            array($wordStub1, 'b(a|@)z(a|@){2}rs', 'a', array('@'), 3),
-            array($wordStub1, 'b(a|@|\*)z(a|@|\*){2}rs', 'a', array('@', '*'), 3),
+            array($wordStub1, 'b(?:a|@)+z(?:a|@){2,}rs', 'a', array('@'), true),
+            array($wordStub1, 'b(?:a|@|\*)+z(?:a|@|\*){2,}rs', 'a', array('@', '*'), true),
+            array($wordStub1, 'b(?:a|@)z(?:a|@){2,}rs', 'a', array('@'), 2),
+            array($wordStub1, 'b(?:a|@|\*)z(?:a|@|\*){2,}rs', 'a', array('@', '*'), 2),
+            array($wordStub1, 'b(?:a|@)z(?:a|@){2}rs', 'a', array('@'), 3),
+            array($wordStub1, 'b(?:a|@|\*)z(?:a|@|\*){2}rs', 'a', array('@', '*'), 3),
         );
     }
 

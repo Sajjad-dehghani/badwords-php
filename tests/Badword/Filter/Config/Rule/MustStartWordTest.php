@@ -33,7 +33,7 @@ class MustStartWordTest extends \PHPUnit_Framework_TestCase
 
         return array(
             array($wordStub1, '(^|'.MustStartWord::REGEXP.')bazaars'),
-            array($wordStub2, 'bazaars'),
+            array($wordStub2, '()bazaars'),
         );
     }
 

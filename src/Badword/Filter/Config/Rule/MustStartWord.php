@@ -21,20 +21,14 @@ use Badword\Word;
  */
 class MustStartWord implements Rule
 {
-    const REGEXP = '\s|\b|[-_\.\:\'"]';
+    const REGEXP = '[^a-z0-9]';
     
     /**
      * {@inheritdoc}
      */
     public function apply($regExp, Word $word)
     {
-        // If the Word must exist at the start of a word only
-        if($word->getMustStartWord())
-        {
-            // Add word boundary detection
-            $regExp = '(^|'.static::REGEXP.')'.$regExp;
-        }
-
-        return $regExp;
+        // If the Word must exist at the start of a word only, add word boundary detection
+        return '(' . ($word->getMustStartWord() ? '^|' . static::REGEXP : null) . ')' . $regExp;
     }
 }
