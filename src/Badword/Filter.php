@@ -259,8 +259,9 @@ class Filter
     protected function filterString($string)
     {
         $matches = array();
-        $leadingCharacterIndex = $this->getConfig()->hasMustStartWordRule() ? 1 : null;
-        $trailingCharacterIndex = $this->getConfig()->hasMustEndWordRule() ? $leadingCharacterIndex + 1 : null;
+        $leadingCharacterIndexStart = $this->getConfig()->hasMustStartWordRule() ? 1 : null;
+        $trailingCharacterIndexStart = $this->getConfig()->hasMustEndWordRule() ? $leadingCharacterIndex + 1 : null;
+        $characterIndexIncrement = $trailingCharacterIndexStart;
 
         // For each Dictionary
         foreach($this->getDictionaries() as $dictionary)
@@ -280,15 +281,29 @@ class Filter
                         foreach($regExpMatches[0] as $index => $regExpMatch)
                         {
                             // If a MustStartWord Rule was used, remove the trailing character if present
-                            if($leadingCharacterIndex && isset($regExpMatches[$leadingCharacterIndex]) && !empty($regExpMatches[$leadingCharacterIndex][$index]))
+                            if($leadingCharacterIndexStart)
                             {
-                                $regExpMatches[0][$index] = substr($regExpMatches[0][$index], 1);
+                                for($i = $leadingCharacterIndexStart; $i <= 99; $i += $characterIndexIncrement)
+                                {
+                                    if(isset($regExpMatches[$i]) && !empty($regExpMatches[$i][$index]))
+                                    {
+                                        $regExpMatches[0][$index] = substr($regExpMatches[0][$index], 1);
+                                        break;
+                                    }
+                                }
                             }
 
                             // If a MustEndWord Rule was used, remove the trailing character if present
-                            if($trailingCharacterIndex && isset($regExpMatches[$trailingCharacterIndex]) && !empty($regExpMatches[$trailingCharacterIndex][$index]))
+                            if($trailingCharacterIndexStart)
                             {
-                                $regExpMatches[0][$index] = substr($regExpMatches[0][$index], 0, mb_strlen($regExpMatches[0][$index]) - 1);
+                                for($i = $trailingCharacterIndexStart; $i <= 99; $i += $characterIndexIncrement)
+                                {
+                                    if(isset($regExpMatches[$i]) && !empty($regExpMatches[$i][$index]))
+                                    {
+                                        $regExpMatches[0][$index] = substr($regExpMatches[0][$index], 0, -1);
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }

@@ -29,11 +29,11 @@ class MustStartWordTest extends \PHPUnit_Framework_TestCase
     {
         $wordStub1 = new Word('bazaars');
         $wordStub2 = new Word('bazaars');
-        $wordStub2->setMustStartWord(false);
+        $wordStub2->setMustStartWord(true);
 
         return array(
-            array($wordStub1, '(^|'.MustStartWord::REGEXP.')bazaars'),
-            array($wordStub2, '()bazaars'),
+            array($wordStub1, '()bazaars'),
+            array($wordStub2, '(^|'.MustStartWord::REGEXP.')bazaars'),
         );
     }
 
@@ -43,5 +43,46 @@ class MustStartWordTest extends \PHPUnit_Framework_TestCase
     public function testApply(Word $word, $expectedResult)
     {
         $this->assertEquals($expectedResult, $this->ruleStub->apply($word->getWord(), $word));
+    }
+    
+    public function dataProviderRegExp()
+    {
+        return array(
+            array('start@nimal'),
+            array('@nimal', ''),
+            array('lorem @nimal', ' '),
+            array('lorem.@nimal', '.'),
+            array('lorem-@nimal', '-'),
+            array('lorem_@nimal', '_'),
+            array('lorem!@nimal', '!'),
+            array('lorem"@nimal', '"'),
+            array('lorem\'@nimal', '\''),
+            array('lorem^@nimal', '^'),
+            array('lorem&@nimal', '&'),
+            array('lorem*@nimal', '*'),
+            array('lorem(@nimal', '('),
+            array('lorem)@nimal', ')'),
+            array('lorem=@nimal', '='),
+            array('lorem+@nimal', '+'),
+            array('lorem@@nimal', '@'),
+        );
+    }
+    
+    /**
+     * @dataProvider dataProviderRegExp
+     */
+    public function testRegExp($string, $boundaryMatch = null)
+    {
+        $word = new Word('@nimal');
+        $word->setMustStartWord(true);
+        $regExp = $this->ruleStub->apply($word->getWord(), $word);
+        
+        $this->assertEquals(($boundaryMatch !== null ? 1 : 0), preg_match_all('/'.$regExp.'/iu', $string, $matches));
+        if($boundaryMatch !== null)
+        {
+            $this->assertEquals(2, count($matches));
+            $this->assertEquals(array($boundaryMatch . '@nimal'), $matches[0]);
+            $this->assertEquals(array($boundaryMatch), $matches[1]);
+        }
     }
 }

@@ -57,5 +57,6 @@ class WhitespaceTest extends \PHPUnit_Framework_TestCase
         $this->ruleStub->setAlternativeCharacters($alternativeCharacters);
 
         $this->assertEquals($expectedResult, $this->ruleStub->apply($word->getWord(), $word));
+        $this->assertEquals(1, preg_match_all('/'.$expectedResult.'/iu', $word->getWord(), $matches));
     }
 }
