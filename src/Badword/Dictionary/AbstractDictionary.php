@@ -17,7 +17,7 @@ use Badword\Dictionary;
 use Badword\Word;
 
 /**
- * AbstractDictionary is the base class for all Dictionary classes.
+ * Base class for all Dictionary classes.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
@@ -49,10 +49,10 @@ abstract class AbstractDictionary implements Dictionary
     protected $words;
 
     /**
-     * Constucts a new Dictionary.
+     * Constructor.
      *
-     * @param integer $riskLevel The level of risk associated with the bad words.
-     * @param Cache $cache The caching mechanism to use.
+     * @param integer $riskLevel The level of risk associated with the words.
+     * @param Cache $cache The cache to use.
      */
     public function __construct($riskLevel = null, Cache $cache = null)
     {
@@ -61,7 +61,7 @@ abstract class AbstractDictionary implements Dictionary
     }
 
     /**
-     * Gets the caching mechanism.
+     * Gets the cache.
      *
      * @return Cache
      */
@@ -71,7 +71,7 @@ abstract class AbstractDictionary implements Dictionary
     }
 
     /**
-     * Sets the caching mechanism.
+     * Sets the cache.
      * 
      * @param Cache $cache
      * 
@@ -99,16 +99,19 @@ abstract class AbstractDictionary implements Dictionary
      * @param boolean $mustEndWordDefault
      *
      * @return AbstractDictionary
+     *
+     * @throws \InvalidArgumentException
      */
     public function setMustEndWordDefault($mustEndWordDefault = true)
     {
-        if(!is_bool($mustEndWordDefault))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid "must end word" default "%s". Expected boolean.', $mustEndWordDefault));
+        if(!is_bool($mustEndWordDefault)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid "must end word" default "%s". Expected boolean.',
+                $mustEndWordDefault
+            ));
         }
 
-        if($mustEndWordDefault !== $this->getMustEndWordDefault())
-        {
+        if($mustEndWordDefault !== $this->getMustEndWordDefault()) {
             $this->clearWords();
         }
 
@@ -132,16 +135,19 @@ abstract class AbstractDictionary implements Dictionary
      * @param boolean $mustStartWordDefault
      *
      * @return AbstractDictionary
+     *
+     * @throws \InvalidArgumentException
      */
     public function setMustStartWordDefault($mustStartWordDefault = true)
     {
-        if(!is_bool($mustStartWordDefault))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid "must start word" default "%s". Expected boolean.', $mustStartWordDefault));
+        if(!is_bool($mustStartWordDefault)) {
+            throw new \InvalidArgumentException(sprintf('
+                Invalid "must start word" default "%s". Expected boolean.',
+                $mustStartWordDefault
+            ));
         }
 
-        if($mustStartWordDefault !== $this->getMustStartWordDefault())
-        {
+        if($mustStartWordDefault !== $this->getMustStartWordDefault()) {
             $this->clearWords();
         }
 
@@ -149,32 +155,33 @@ abstract class AbstractDictionary implements Dictionary
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRiskLevel()
     {
         return $this->riskLevel;
     }
 
     /**
-     * Sets the level of risk associated with the bad words. The greater
-     * the number, the greater the risk. 0 is considered no risk.
+     * Sets the risk level associated with the words.
      *
-     * For example, a Dictionary containing bad words that only require
+     * The greater the number, the greater the risk, i.e. 0 is considered
+     * no risk. For example, a Dictionary containing words that only require
      * moderation could have a risk level of 1. Where as a Dictionary
-     * containing bad words that should be instantly rejected could have
+     * containing words that should be instantly rejected could have
      * a risk level of 2. The scale past 0 is completely arbitrary.
      *
      * @param integer $riskLevel
-     * 
+     *
      * @return AbstractDictionary
+     *
+     * @throws \InvalidArgumentException
      */
     public function setRiskLevel($riskLevel)
     {
-        if(!($riskLevel === null || (is_int($riskLevel) && $riskLevel > 0)))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid risk level "%s". Please provide an integer greater than 0, or null.', $riskLevel));
+        if(!($riskLevel === null || (is_int($riskLevel) && $riskLevel > 0))) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid risk level "%s". Please provide an integer greater than 0, or null.',
+                $riskLevel
+            ));
         }
 
         $this->riskLevel = $riskLevel;
@@ -182,7 +189,7 @@ abstract class AbstractDictionary implements Dictionary
     }
 
     /**
-     * Clears the local cache of Words.
+     * Clears the local cache of words.
      *
      * @return AbstractDictionary
      */
@@ -192,9 +199,6 @@ abstract class AbstractDictionary implements Dictionary
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getWords()
     {
         if($this->words === null)
@@ -206,40 +210,35 @@ abstract class AbstractDictionary implements Dictionary
     }
 
     /**
-     * Loads the Words either from the cache or directly from the source.
+     * Loads the words either from the cache or directly from the source.
      *
      * @return array
+     *
+     * @throws Exception
      */
     protected function loadWords()
     {
         $fromCache = true;
         $wordsData = $this->loadWordsDataFromCache();
-        if(!$wordsData)
-        {
+        if(!$wordsData) {
             $fromCache = false;
             $wordsData = $this->loadWordsDataFromSource();
         }
 
-        if(!(is_array($wordsData) && count($wordsData) > 0))
-        {
+        if(!(is_array($wordsData) && count($wordsData) > 0)) {
             throw new Exception('Words could not be loaded. Load failed or source was empty.');
         }
 
-        if(!$fromCache)
-        {
+        if(!$fromCache) {
             $this->saveWordsDataToCache($wordsData);
         }
 
         $words = array();
-        foreach($wordsData as $wordData)
-        {
+        foreach($wordsData as $wordData) {
             $word = $this->convertWordDataToObject($wordData);
-            if(!in_array($word, $words))
-            {
+            if(!in_array($word, $words)) {
                 array_push($words, $word);
-            }
-            else
-            {
+            } else {
                 unset($word);
             }
         }
@@ -285,7 +284,7 @@ abstract class AbstractDictionary implements Dictionary
      */
     protected function getCacheKey()
     {
-        return $this->getId().'_words_data';
+        return $this->getId() . '_words_data';
     }
 
     /**

@@ -14,7 +14,7 @@ namespace Badword\Filter;
 use Badword\Dictionary;
 
 /**
- * Result contains result data from a Filter execution.
+ * Contains result data from a filter execution.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
@@ -46,7 +46,7 @@ class Result
     protected $riskLevels;
 
     /**
-     * Constructs a new Result.
+     * Constructor.
      *
      * @param string $content The content that was filtered.
      * @param array $matches The matches found in the content suspected of being bad words.
@@ -78,8 +78,7 @@ class Result
     {
         $matches = array();
 
-        foreach($this->matches as $dictionaryMatches)
-        {
+        foreach($this->matches as $dictionaryMatches) {
             $matches = array_merge($matches, $dictionaryMatches);
         }
 
@@ -87,26 +86,27 @@ class Result
     }
 
     /**
-     * Gets the matches found in the content suspected of being bad words and their specific risk levels.
+     * Gets the matches found in the content suspected of being
+     * bad words and their specific risk levels.
      * 
-     * @return array An array where suspected bad words are keys and risk levels are values.
+     * @return array
      */
     public function getMatchesAndRiskLevels()
     {
         $matchesAndRisk = array();
 
-        foreach($this->matches as $dictionaryId => $dictionaryMatches)
-        {
-            foreach($dictionaryMatches as $match)
-            {
-                if(!isset($matchesAndRisk[$match]))
-                {
+        foreach($this->matches as $dictionaryId => $dictionaryMatches) {
+            foreach($dictionaryMatches as $match) {
+                if(!isset($matchesAndRisk[$match])) {
                     $matchesAndRisk[$match] = null;
                 }
-
-                if(isset($this->riskLevels[$dictionaryId]) && $this->riskLevels[$dictionaryId] !== null)
-                {
-                    $matchesAndRisk[$match] = $this->riskLevels[$dictionaryId] > $matchesAndRisk[$match] ? $this->riskLevels[$dictionaryId] : $matchesAndRisk[$match];
+                if(isset($this->riskLevels[$dictionaryId]) &&
+                   $this->riskLevels[$dictionaryId] !== null
+                ) {
+                    $matchesAndRisk[$match] =
+                        $this->riskLevels[$dictionaryId] > $matchesAndRisk[$match] ?
+                            $this->riskLevels[$dictionaryId] :
+                            $matchesAndRisk[$match];
                 }
             }
         }
@@ -115,7 +115,8 @@ class Result
     }
 
     /**
-     * Gets the matches for a specific Dictionary found in the content suspected of being bad words.
+     * Gets the matches for a specific dictionary found in the
+     * content suspected of being bad words.
      *
      * @param Dictionary $dictionary
      * 
@@ -123,7 +124,8 @@ class Result
      */
     public function getDictionaryMatches(Dictionary $dictionary)
     {
-        return isset($this->matches[$dictionary->getId()]) ? $this->matches[$dictionary->getId()] : array();
+        return isset($this->matches[$dictionary->getId()]) ?
+            $this->matches[$dictionary->getId()] : array();
     }
 
     /**
@@ -136,11 +138,12 @@ class Result
     {
         $riskLevel = null;
 
-        foreach($this->matches as $dictionaryId => $dictionaryMatches)
-        {
-            if(isset($this->riskLevels[$dictionaryId]) && $this->riskLevels[$dictionaryId] !== null)
-            {
-                $riskLevel = $this->riskLevels[$dictionaryId] > $riskLevel ? $this->riskLevels[$dictionaryId] : $riskLevel;
+        foreach($this->matches as $dictionaryId => $dictionaryMatches) {
+            if(isset($this->riskLevels[$dictionaryId]) &&
+                $this->riskLevels[$dictionaryId] !== null
+            ){
+                $riskLevel = $this->riskLevels[$dictionaryId] > $riskLevel ?
+                    $this->riskLevels[$dictionaryId] : $riskLevel;
             }
         }
 
@@ -171,12 +174,16 @@ class Result
      * Sets the CSS class used when highlighting suspected bad words in content.
      *
      * @return string
+     *
+     * @throws \InvalidArgumentException
      */
     public function setHighlightedContentBadwordClass($class)
     {
-        if(!(is_string($class) && mb_strlen(trim($class)) > 0))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid highlight CSS class "%s". Expected non-empty string.', $class));
+        if(!(is_string($class) && mb_strlen(trim($class)) > 0)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid highlight CSS class "%s". Expected non-empty string.',
+                $class
+            ));
         }
 
         $this->highlightedContentBadwordClass = trim($class);
@@ -198,13 +205,19 @@ class Result
      * Sets the CSS class suffix used to highlight the risk level
      * when highlighting suspected bad words in content.
      *
+     * @param string $class
+     *
      * @return string
+     *
+     * @throws \InvalidArgumentException
      */
     public function setHighlightedContentRiskLevelClassSuffix($class)
     {
-        if(!(is_string($class) && mb_strlen(trim($class)) > 0))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid highlight risk level CSS class suffix "%s". Expected non-empty string.', $class));
+        if(!(is_string($class) && mb_strlen(trim($class)) > 0)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid highlight risk level CSS class suffix "%s". Expected non-empty string.',
+                $class
+            ));
         }
 
         $this->highlightedContentRiskLevelClassSuffix = trim($class);
@@ -212,33 +225,32 @@ class Result
     }
 
     /**
-     * Gets the content that was filtered with suspected bad words highlighted using <span>'s.
+     * Gets the content that was filtered with suspected bad words
+     * highlighted using <span>'s.
      *
      * @return string
      */
     public function getHighlightedContent()
     {
         $content = htmlentities($this->getContent());
-        
         $replacements = array();
 
-        foreach($this->getMatchesAndRiskLevels() as $match => $riskLevel)
-        {
+        foreach($this->getMatchesAndRiskLevels() as $match => $riskLevel) {
+
             $replacement = sprintf(
                 '<span class="%s%s">%s</span>',
                 $this->getHighlightedContentBadwordClass(),
-                ($riskLevel !== null ? ' '.$this->getHighlightedContentRiskLevelClassSuffix().$riskLevel : null), 
+                ($riskLevel !== null ? ' ' . $this->getHighlightedContentRiskLevelClassSuffix() . $riskLevel : null),
                 $match
             );
             
             $placeholder = '{#{#{'.count($replacements).'}#}#}';
             
             $replacements[$placeholder] = $replacement;
-            $content = preg_replace('/'.$match.'/iu', $placeholder, $content);
+            $content = preg_replace('/' . $match . '/iu', $placeholder, $content);
         }
         
-        foreach($replacements as $placeholder => $replacement)
-        {
+        foreach($replacements as $placeholder => $replacement) {
             $content = str_replace($placeholder, $replacement, $content);
         }
 

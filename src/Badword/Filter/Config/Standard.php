@@ -17,17 +17,18 @@ use Badword\Filter\Config\Rule\MustStartEndWord;
 use Badword\Filter\Config\Rule\Whitespace;
 
 /**
- * Standard defines a default Config to use for the Filter.
+ * Defines a default config to use for the filter.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
 class Standard extends Config
 {
     /**
-     * Constructs a new Standard Config.
+     * Constructor.
      */
     public function __construct()
     {
+        // Parent
         parent::__construct();
 
         // Vowels

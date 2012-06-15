@@ -12,7 +12,7 @@
 namespace Badword;
 
 /**
- * Dictionary gets a list of bad words.
+ * Defines the interface for a dictionary, a.k.a. list, of words.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
@@ -26,12 +26,12 @@ interface Dictionary
     public function getId();
 
     /**
-     * Gets the level of risk associated with the bad words. The greater
-     * the number, the greater the risk. 0 is considered no risk.
+     * Gets the risk level associated with the words.
      *
-     * For example, a Dictionary containing bad words that only require
+     * The greater the number, the greater the risk, i.e. 0 is considered
+     * no risk. For example, a Dictionary containing words that only require
      * moderation could have a risk level of 1. Where as a Dictionary
-     * containing bad words that should be instantly rejected could have
+     * containing words that should be instantly rejected could have
      * a risk level of 2. The scale past 0 is completely arbitrary.
      *
      * @return integer
@@ -39,9 +39,9 @@ interface Dictionary
     public function getRiskLevel();
     
     /**
-     * Gets the Words.
+     * Gets the words.
      *
-     * @return array Array of Word objects.
+     * @return Word[]
      */
     public function getWords();
 }

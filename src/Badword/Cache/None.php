@@ -18,33 +18,21 @@ namespace Badword\Cache;
  */
 class None extends AbstractCache
 {
-    /**
-     * {@inheritdoc}
-     */
     public function get($key, $default = null)
     {
         return $default;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function has($key)
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function set($key, $data, $lifetime = null)
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove($key)
     {
         return true;

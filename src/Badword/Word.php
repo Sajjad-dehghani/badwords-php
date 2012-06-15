@@ -12,7 +12,7 @@
 namespace Badword;
 
 /**
- * Word is a single bad word and its settings.
+ * Represents a single word and its settings.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
@@ -34,7 +34,7 @@ class Word
     protected $word;
 
     /**
-     * Constructs a new Word.
+     * Constructor.
      * 
      * @param string $word The bad word.
      * @param boolean $mustStartWord Whether the bad word must exist at the start of a word only.
@@ -63,12 +63,16 @@ class Word
      * @param boolean $mustEndWord
      *
      * @return Word
+     *
+     * @throws \InvalidArgumentException
      */
     public function setMustStartWord($mustStartWord)
     {
-        if(!(is_bool($mustStartWord)))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid must start word "%s". Expected boolean.', $mustStartWord));
+        if(!(is_bool($mustStartWord))) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid must start word "%s". Expected boolean.',
+                $mustStartWord
+            ));
         }
 
         $this->mustStartWord = $mustStartWord;
@@ -91,12 +95,16 @@ class Word
      * @param boolean $mustEndWord
      *
      * @return Word
+     *
+     * @throws \InvalidArgumentException
      */
     public function setMustEndWord($mustEndWord)
     {
-        if(!(is_bool($mustEndWord)))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid must end word "%s". Expected boolean.', $mustEndWord));
+        if(!(is_bool($mustEndWord))) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid must end word "%s". Expected boolean.',
+                $mustEndWord
+            ));
         }
 
         $this->mustEndWord = $mustEndWord;
@@ -119,12 +127,16 @@ class Word
      * @param string $word
      *
      * @return Word
+     *
+     * @throws \InvalidArgumentException
      */
     public function setWord($word)
     {
-        if(!(is_string($word) && mb_strlen(trim($word)) > 0))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid word "%s". Expected non-empty string.', $word));
+        if(!(is_string($word) && mb_strlen(trim($word)) > 0)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid word "%s". Expected non-empty string.',
+                $word
+            ));
         }
 
         $this->word = mb_strtolower(trim($word));

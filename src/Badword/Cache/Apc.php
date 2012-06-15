@@ -19,48 +19,34 @@ namespace Badword\Cache;
 class Apc extends AbstractCache
 {
     /**
-     * {@inheritdoc}
+     * Constructor.
      *
-     * @throws \RuntimeException When APC can not be found or used.
+     * @throws \RuntimeException
      */
     public function __construct($prefix = self::DEFAULT_PREFIX, $defaultLifetime = null)
     {
-        if(!function_exists('apc_store') || !ini_get('apc.enabled'))
-        {
-            // @codeCoverageIgnoreStart
-            throw new \RuntimeException('You must have APC installed and enabled to use the Apc cache class.');
-            // @codeCoverageIgnoreEnd
+        if(!function_exists('apc_store') || !ini_get('apc.enabled')) {
+            throw new \RuntimeException(
+                'You must have APC installed and enabled to use the Apc cache class.'
+            );
         }
 
         parent::__construct($prefix, $defaultLifetime);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get($key, $default = null)
     {
         $value = $this->fetch($key, $has);
         return $has ? $value : $default;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function has($key)
     {
-        if(function_exists('apc_exists'))
-        {
-            // @codeCoverageIgnoreStart
-            return apc_exists($key);
-            // @codeCoverageIgnoreEnd
-        }
-        else
-        {
-            // @codeCoverageIgnoreStart
+        if(function_exists('apc_exists')) {
+            return apc_exists($this->getPrefix() . $key);
+        } else {
             $this->fetch($key, $has);
             return $has;
-            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -75,44 +61,42 @@ class Apc extends AbstractCache
     protected function fetch($key, &$success)
     {
         $fetchSuccess = null;
-        $value = apc_fetch($this->getPrefix().$key, $fetchSuccess);
+        $value = apc_fetch($this->getPrefix() . $key, $fetchSuccess);
 
-        if($fetchSuccess !== null)
-        {
+        if($fetchSuccess !== null) {
             $success = $fetchSuccess;
-        }
-        else
-        {
-            // @codeCoverageIgnoreStart
+        } else {
             $success = $value !== false;
-            // @codeCoverageIgnoreEnd
         }
 
         return $value;
     }
 
     /**
-     * {@inheritdoc}
+     * Adds data to the cache.
      *
-     * @throws \InvalidArgumentException When the lifetime is invalid.
+     * @param string $key Unique identifier for the cached data.
+     * @param mixed $data The data to store.
+     * @param integer $lifetime The amount of time the data should be stored.
+     *
+     * @return boolean
+     *
+     * @throws \InvalidArgumentException
      */
     public function set($key, $data, $lifetime = null)
     {
-        if(!$this->validateLifetime($lifetime))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid lifetime "%s". Expected integer greater than 0.', $lifetime));
-        }
-        else if($lifetime === null)
-        {
+        if(!$this->validateLifetime($lifetime)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid lifetime "%s". Expected integer greater than 0.',
+                $lifetime
+            ));
+        } else if($lifetime === null) {
             $lifetime = $this->getDefaultLifetime();
         }
         
         return apc_store($this->getPrefix().$key, $data, $lifetime);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove($key)
     {
         return apc_delete($this->getPrefix().$key);

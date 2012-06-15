@@ -15,7 +15,7 @@ use Badword\Filter\Config\Rule;
 use Badword\Word;
 
 /**
- * AbstractCharacter defines the base settings for all Character rules.
+ * Defines the base settings for all single character based rules.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
@@ -27,7 +27,7 @@ abstract class AbstractCharacter implements Rule
     protected $alternativeCharacters;
 
     /**
-     * Constructs a new AbstractCharacter.
+     * Constructor.
      *
      * @param array $alternativeCharacters The alternative characters that can be present instead of the character, e.g. @ for a.
      */
@@ -37,23 +37,27 @@ abstract class AbstractCharacter implements Rule
     }
 
     /**
-     * Adds an alternative character that can be present instead of the character, e.g. @ for a.
+     * Adds an alternative character that can be present instead of
+     * the character, e.g. @ for a.
      *
      * @param string $alternativeCharacter
      *
      * @return AbstractCharacter
+     *
+     * @throws \InvalidArgumentException
      */
     public function addAlternativeCharacter($alternativeCharacter)
     {
-        if(!$this->validateAlternativeCharacter($alternativeCharacter))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid alternative character "%s". Please provide a single string character.', $alternativeCharacter));
+        if(!$this->validateAlternativeCharacter($alternativeCharacter)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid alternative character "%s". Please provide a single string character.',
+                $alternativeCharacter
+            ));
         }
 
         $alternativeCharacter = $this->cleanAlternativeCharacter($alternativeCharacter);
 
-        if(!in_array($alternativeCharacter, $this->alternativeCharacters))
-        {
+        if(!in_array($alternativeCharacter, $this->alternativeCharacters)) {
             array_push($this->alternativeCharacters, $alternativeCharacter);
         }
 
@@ -61,30 +65,39 @@ abstract class AbstractCharacter implements Rule
     }
 
     /**
-     * Adds alternative characters that can be present instead of the character, e.g. @ for a.
+     * Adds alternative characters that can be present instead of
+     * the character, e.g. @ for a.
      *
      * @param array $alternativeCharacters
      *
      * @return AbstractCharacter
+     *
+     * @throws \InvalidArgumentException
      */
     public function addAlternativeCharacters(array $alternativeCharacters)
     {
-        foreach($alternativeCharacters as $key => $alternativeCharacter)
-        {
-            if(!$this->validateAlternativeCharacter($alternativeCharacter))
-            {
-                throw new \InvalidArgumentException(sprintf('Invalid alternative character "%s". Please provide a single character string.', $alternativeCharacter));
+        foreach($alternativeCharacters as $key => $alternativeCharacter) {
+            if(!$this->validateAlternativeCharacter($alternativeCharacter)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid alternative character "%s". Please provide a single character string.',
+                    $alternativeCharacter
+                ));
             }
 
             $alternativeCharacters[$key] = $this->cleanAlternativeCharacter($alternativeCharacter);
         }
 
-        $this->alternativeCharacters = array_values(array_unique(array_merge($this->alternativeCharacters, array_values($alternativeCharacters))));
+        $this->alternativeCharacters = array_values(array_unique(array_merge(
+            $this->alternativeCharacters,
+            array_values($alternativeCharacters)
+        )));
+
         return $this;
     }
 
     /**
-     * Gets the alternative characters that can be present instead of the character, e.g. @ for a.
+     * Gets the alternative characters that can be present instead of
+     * the character, e.g. @ for a.
      *
      * @return array
      */
@@ -94,19 +107,23 @@ abstract class AbstractCharacter implements Rule
     }
 
     /**
-     * Sets the alternative characters that can be present instead of the character, e.g. @ for a.
+     * Sets the alternative characters that can be present instead of
+     * the character, e.g. @ for a.
      *
      * @param array $alternativeCharacters
      *
      * @return AbstractCharacter
+     *
+     * @throws \InvalidArgumentException
      */
     public function setAlternativeCharacters(array $alternativeCharacters)
     {
-        foreach($alternativeCharacters as $key => $alternativeCharacter)
-        {
-            if(!$this->validateAlternativeCharacter($alternativeCharacter))
-            {
-                throw new \InvalidArgumentException(sprintf('Invalid alternative character "%s". Please provide a single character string', $alternativeCharacter));
+        foreach($alternativeCharacters as $key => $alternativeCharacter) {
+            if(!$this->validateAlternativeCharacter($alternativeCharacter)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid alternative character "%s". Please provide a single character string',
+                    $alternativeCharacter
+                ));
             }
 
             $alternativeCharacters[$key] = $this->cleanAlternativeCharacter($alternativeCharacter);
@@ -125,7 +142,8 @@ abstract class AbstractCharacter implements Rule
      */
     protected function validateAlternativeCharacter($alternativeCharacter)
     {
-        return is_string($alternativeCharacter) && mb_strlen(trim($alternativeCharacter)) === 1;
+        return is_string($alternativeCharacter) &&
+            mb_strlen(trim($alternativeCharacter)) === 1;
     }
 
     /**

@@ -12,7 +12,7 @@
 namespace Badword;
 
 /**
- * Cache reads and stores data from the cache.
+ * Defines the interface for reading and storing data from a cache.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */

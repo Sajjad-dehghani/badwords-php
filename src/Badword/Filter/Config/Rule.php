@@ -14,20 +14,20 @@ namespace Badword\Filter\Config;
 use Badword\Word;
 
 /**
- * Rule defines a specific regular expression generation
- * rule for the Config to implement.
+ * Defines the interface for a specific regular expression generation
+ * rule for the config to implement
  * 
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
 interface Rule
 {
     /**
-     * Applies the Rule to the data using the provided Word.
+     * Applies the rule to the data using the provided word.
      *
      * @param string $regExp
      * @param Word $word
      *
-     * @return string The generated $regExp.
+     * @return string
      */
     public function apply($regExp, Word $word);
 }

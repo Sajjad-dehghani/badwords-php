@@ -14,7 +14,7 @@ namespace Badword\Cache;
 use Badword\Cache;
 
 /**
- * AbstractCache is the base cache class for all Cache classes.
+ * Base class for all Cache classes.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
@@ -34,7 +34,7 @@ abstract class AbstractCache implements Cache
     protected $prefix;
 
     /**
-     * Constructs a new cache.
+     * Constructor.
      *
      * @param string $prefix The text to prefix to each cache entry.
      * @param integer $defaultLifetime The default amount of time the data should be stored.
@@ -61,12 +61,16 @@ abstract class AbstractCache implements Cache
      * @param integer $defaultLifetime
      *
      * @return AbstractCache
+     *
+     * @throws \InvalidArgumentException
      */
     public function setDefaultLifetime($defaultLifetime = self::DEFAULT_LIFETIME)
     {
-        if(!$this->validateLifetime($defaultLifetime))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid default lifetime "%s". Expected integer greater than 0 or null.', $defaultLifetime));
+        if(!$this->validateLifetime($defaultLifetime)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid default lifetime "%s". Expected integer greater than 0 or null.',
+                $defaultLifetime
+            ));
         }
         
         $this->defaultLifetime = $defaultLifetime !== null ? (int) $defaultLifetime : null;
@@ -82,7 +86,8 @@ abstract class AbstractCache implements Cache
      */
     protected function validateLifetime($lifetime)
     {
-        return $lifetime === null || ((is_int($lifetime) || ctype_digit($lifetime)) && $lifetime > 0);
+        return $lifetime === null ||
+            ((is_int($lifetime) || ctype_digit($lifetime)) && $lifetime > 0);
     }
 
     /**
@@ -101,12 +106,16 @@ abstract class AbstractCache implements Cache
      * @param string $prefix
      *
      * @return AbstractCache
+     *
+     * @throws \InvalidArgumentException
      */
     public function setPrefix($prefix)
     {
-        if(!(is_string($prefix) && mb_strlen(trim($prefix)) > 0))
-        {
-            throw new \InvalidArgumentException(sprintf('Invalid prefix "%s". Please provide a non-empty string.', $prefix));
+        if(!(is_string($prefix) && mb_strlen(trim($prefix)) > 0)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid prefix "%s". Please provide a non-empty string.',
+                $prefix
+            ));
         }
 
         $this->prefix = $prefix;

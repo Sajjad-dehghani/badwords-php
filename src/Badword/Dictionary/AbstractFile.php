@@ -14,8 +14,7 @@ namespace Badword\Dictionary;
 use Badword\Cache;
 
 /**
- * AbstractFile is the base class for all Dictionaries
- * that use a file as their source.
+ * Base class for all Dictionaries that use a file as their source.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
@@ -27,7 +26,7 @@ abstract class AbstractFile extends AbstractDictionary
     protected $path;
 
     /**
-     * Constucts a new Dictionary.
+     * Constructor.
      *
      * @param string $path The path to the source file.
      * @param integer $riskLevel The level of risk associated with the bad words.
@@ -61,21 +60,18 @@ abstract class AbstractFile extends AbstractDictionary
      */
     public function setPath($path)
     {
-        if(!(is_string($path) && mb_strlen(trim($path)) > 0))
-        {
+        if(!(is_string($path) && mb_strlen(trim($path)) > 0)) {
             throw new \InvalidArgumentException(sprintf('Invalid path "%s". Expected path to a valid source file.', $path));
         }
 
         $path = trim($path);
 
-        if(!(is_readable($path) && !is_dir($path)))
-        {
+        if(!(is_readable($path) && !is_dir($path))) {
             throw new \InvalidArgumentException(sprintf('Invalid path "%s". The specified path is either invalid, can not be found, or can not be read.', $path));
         }
 
         $path = realpath($path);
-        if($path !== $this->getPath())
-        {
+        if($path !== $this->getPath()) {
             $this->clearWords();
         }
 
@@ -83,12 +79,13 @@ abstract class AbstractFile extends AbstractDictionary
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
-        return $this->getFileType().'_'.md5($this->getPath().';'.$this->getMustStartWordDefault().';'.$this->getMustEndWordDefault());
+        return $this->getFileType() . '_' . md5(
+            $this->getPath() . ';' .
+            $this->getMustStartWordDefault() . ';' .
+            $this->getMustEndWordDefault()
+        );
     }
 
     /**

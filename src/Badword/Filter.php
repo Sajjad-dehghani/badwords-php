@@ -18,7 +18,7 @@ use Badword\Filter\Config\Rule\MustStartWord;
 use Badword\Filter\Result;
 
 /**
- * Filter detects bad words in content.
+ * Detects bad words in content.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
@@ -47,11 +47,11 @@ class Filter
     protected $regExps = array();
 
     /**
-     * Constructs a new Filter.
+     * Constructor.
      * 
-     * @param Dictionary|array $dictionaries The Dictionary or Dictionaries of bad words to filter against.
-     * @param Config $config The Config used during execution.
-     * @param Cache $cache The caching mechanism to use.
+     * @param Dictionary|array $dictionaries The dictionary or dictionaries of bad words to filter against.
+     * @param Config $config The config used during execution.
+     * @param Cache $cache The cache to use.
      */
     public function __construct($dictionaries, Config $config, Cache $cache = null)
     {
@@ -61,7 +61,7 @@ class Filter
     }
 
     /**
-     * Gets the caching mechanism.
+     * Gets the cache.
      *
      * @return Cache
      */
@@ -71,7 +71,7 @@ class Filter
     }
 
     /**
-     * Sets the caching mechanism.
+     * Sets the cache.
      *
      * @param Cache $cache
      *
@@ -84,7 +84,7 @@ class Filter
     }
 
     /**
-     * Gets the Config used during execution.
+     * Gets the config used during execution.
      *
      * @return Config
      */
@@ -94,7 +94,7 @@ class Filter
     }
 
     /**
-     * Sets the Config used during execution.
+     * Sets the config used during execution.
      *
      * @param Config $config
      * 
@@ -102,8 +102,7 @@ class Filter
      */
     public function setConfig(Config $config)
     {
-        if($config !== $this->getConfig())
-        {
+        if($config !== $this->getConfig()) {
             $this->clearRegExps();
         }
 
@@ -112,7 +111,7 @@ class Filter
     }
 
     /**
-     * Adds a Dictionary of bad words to filter against.
+     * Adds a dictionary of words to filter against.
      *
      * @param Dictionary $dictionary
      *
@@ -120,10 +119,8 @@ class Filter
      */
     public function addDictionary(Dictionary $dictionary)
     {
-        if(!in_array($dictionary, $this->getDictionaries()))
-        {
+        if(!in_array($dictionary, $this->getDictionaries())) {
             array_push($this->dictionaries, $dictionary);
-            
             $this->clearRegExps();
         }
 
@@ -131,26 +128,26 @@ class Filter
     }
 
     /**
-     * Adds Dictionaries of bad words to filter against.
+     * Adds dictionaries of words to filter against.
      *
      * @param array $dictionaries
      *
      * @return Filter
      *
-     * @throws \InvalidArgumentException When a dictionary is invalid.
+     * @throws \InvalidArgumentException
      */
     public function addDictionaries(array $dictionaries)
     {
-        foreach($dictionaries as $key => $dictionary)
-        {
-            if(!($dictionary instanceof Dictionary))
-            {
-                throw new \InvalidArgumentException(sprintf('Invalid dictionary at key "%s". Expected instance of \Badword\Dictionary.', $key));
+        foreach($dictionaries as $key => $dictionary) {
+            if(!($dictionary instanceof Dictionary)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid dictionary at key "%s". Expected instance of Dictionary.',
+                    $key
+                ));
             }
         }
 
-        foreach($dictionaries as $dictionary)
-        {
+        foreach($dictionaries as $dictionary) {
             $this->addDictionary($dictionary);
         }
 
@@ -158,7 +155,7 @@ class Filter
     }
 
     /**
-     * Gets the Dictionaries of bad words to filter against.
+     * Gets the dictionaries of words to filter against.
      *
      * @return array
      */
@@ -168,28 +165,28 @@ class Filter
     }
 
     /**
-     * Sets the Dictionaries of bad words to filter against.
+     * Sets the dictionaries of words to filter against.
      *
      * @param array $dictionaries
      *
      * @return Filter
      *
-     * @throws \InvalidArgumentException When a dictionary is invalid.
+     * @throws \InvalidArgumentException
      */
     public function setDictionaries(array $dictionaries)
     {
-        foreach($dictionaries as $key => $dictionary)
-        {
-            if(!($dictionary instanceof Dictionary))
-            {
-                throw new \InvalidArgumentException(sprintf('Invalid dictionary at key "%s". Expected instance of \Badword\Dictionary.', $key));
+        foreach($dictionaries as $key => $dictionary) {
+            if(!($dictionary instanceof Dictionary)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid dictionary at key "%s". Expected instance of Dictionary.',
+                    $key
+                ));
             }
         }
 
         $this->dictionaries = array();
 
-        foreach($dictionaries as $dictionary)
-        {
+        foreach($dictionaries as $dictionary) {
             $this->addDictionary($dictionary);
         }
 
@@ -208,28 +205,25 @@ class Filter
     }
 
     /**
-     * Filters some content for bad words and returns a Result. 
-     * If multiple contents are specified, multiple Results will be returned.
+     * Filters some content for bad words and returns a result.
+     * If multiple contents are specified, multiple results will be returned.
      *
      * @param string|array $content A single content string or an array of content strings.
      *
      * @return Result|array A single Result or an array of Results.
      *
-     * @throws \InvalidArgumentException When a content string is invalid.
+     * @throws \InvalidArgumentException
      */
     public function filter($content)
     {
         $singleContent = false;
-        if(!is_array($content))
-        {
+        if(!is_array($content)) {
             $content = array($content);
             $singleContent = true;
         }
 
-        foreach($content as $key => $string)
-        {
-            if(!(is_string($string) && mb_strlen(trim($string)) > 0))
-            {
+        foreach($content as $key => $string) {
+            if(!(is_string($string) && mb_strlen(trim($string)) > 0)) {
                 throw new \InvalidArgumentException(sprintf(
                     'Invalid content%s. Please provide a non-empty string.',
                     (count($string) > 1 ? sprintf(' at index "%s".', $key) : null)
@@ -240,9 +234,12 @@ class Filter
         $results = array();
         $riskLevels = $this->getDictionaryRiskLevels();
 
-        foreach($content as $key => $string)
-        {
-            array_push($results, new Result($string, $this->filterString($string), $riskLevels));
+        foreach($content as $key => $string) {
+            array_push($results, new Result(
+                $string,
+                $this->filterString($string),
+                $riskLevels
+            ));
         }
 
         return count($results) === 1 && $singleContent ? $results[0] : $results;
@@ -260,39 +257,40 @@ class Filter
         $matches = array();
 
         // For each Dictionary
-        foreach($this->getDictionaries() as $dictionary)
-        {
-            $dictionaryMatches = array();
+        foreach($this->getDictionaries() as $dictionary) {
 
             // Loop through the regular expressions
-            foreach($this->getDictionaryRegExps($dictionary) as $regExp)
-            {
+            $dictionaryMatches = array();
+            foreach($this->getDictionaryRegExps($dictionary) as $regExp) {
+
                 // Run the regular expression on the string and process any matches found
-                if(preg_match_all('/'.$regExp.'/iu', $string, $regExpMatches))
-                {
+                if(preg_match_all('/' . $regExp . '/iu', $string, $regExpMatches)) {
+
                     // If there's a whitelist, only store each match if it isn't in there
-                    if($this->getConfig()->getWhitelistedWords())
-                    {
-                        foreach($regExpMatches[0] as $regExpMatch)
-                        {
-                            if(!in_array(mb_strtolower(trim($regExpMatch)), $this->getConfig()->getWhitelistedWords()))
-                            {
+                    if($this->getConfig()->getWhitelistedWords()) {
+                        foreach($regExpMatches[0] as $regExpMatch) {
+                            if(!in_array(
+                                mb_strtolower(trim($regExpMatch)),
+                                $this->getConfig()->getWhitelistedWords()
+                            )) {
                                 array_push($dictionaryMatches, $regExpMatch);
                             }
                         }
-                    }
+
                     // Otherwise just straight store the matches
-                    else
-                    {
-                        $dictionaryMatches = array_merge($dictionaryMatches, $regExpMatches[0]);
+                    } else {
+                        $dictionaryMatches = array_merge(
+                            $dictionaryMatches,
+                            $regExpMatches[0]
+                        );
                     }
                 }
             }
 
             // Store any matches found against the Dictionary ID
-            if($dictionaryMatches)
-            {
-                $matches[$dictionary->getId()] = array_values(array_unique($dictionaryMatches));
+            if($dictionaryMatches) {
+                $matches[$dictionary->getId()] =
+                    array_values(array_unique($dictionaryMatches));
             }
         }
 
@@ -300,7 +298,7 @@ class Filter
     }
 
     /**
-     * Gets the regular expressions for the Dictionary.
+     * Gets the regular expressions for the dictionary.
      *
      * @param Dictionary $dictionary
      * 
@@ -308,9 +306,9 @@ class Filter
      */
     protected function getDictionaryRegExps(Dictionary $dictionary)
     {
-        if(!isset($this->regExps[$dictionary->getId()]))
-        {
-            $this->regExps[$dictionary->getId()] = $this->loadOrGenerateDictionaryRegExps($dictionary);
+        if(!isset($this->regExps[$dictionary->getId()])) {
+            $this->regExps[$dictionary->getId()] =
+                $this->loadOrGenerateDictionaryRegExps($dictionary);
         }
 
         return $this->regExps[$dictionary->getId()];
@@ -322,26 +320,26 @@ class Filter
      * @param Dictionary $dictionary
      * 
      * @return array
+     *
+     * @throws Exception
      */
     protected function loadOrGenerateDictionaryRegExps(Dictionary $dictionary)
     {
         $fromCache = true;
         $regExps = $this->loadDictionaryRegExpsFromCache($dictionary);
-        if(!$regExps)
-        {
+        if(!$regExps) {
             $fromCache = false;
             $regExps = $this->generateDictionaryRegExps($dictionary);
         }
 
-        if(!(is_array($regExps)))
-        {
-            // @codeCoverageIgnoreStart
-            throw new Exception(sprintf('Error while loading or generating regular expressions for Dictionary with ID "%s".', $dictionary->getId()));
-            // @codeCoverageIgnoreEnd
+        if(!(is_array($regExps))) {
+            throw new Exception(sprintf(
+                'Error while loading or generating regular expressions for Dictionary with ID "%s".',
+                $dictionary->getId()
+            ));
         }
 
-        if(!$fromCache)
-        {
+        if(!$fromCache) {
             $this->saveDictionaryRegExpsToCache($dictionary, $regExps);
         }
 
@@ -349,7 +347,7 @@ class Filter
     }
 
     /**
-     * Loads the Dictionary regular expressions from the cache.
+     * Loads the dictionary regular expressions from the cache.
      *
      * @param Dictionary $dictionary
      *
@@ -363,7 +361,7 @@ class Filter
     }
 
     /**
-     * Generates the regular expressions for a Dictionary using the set Config.
+     * Generates the regular expressions for a dictionary using the set config.
      *
      * @param Dictionary $dictionary
      *
@@ -373,25 +371,22 @@ class Filter
     {
         // Convert each Word in the Dictionary to a regular expressions
         $wordRegExps = array();
-        foreach($dictionary->getWords() as $word)
-        {
+        foreach($dictionary->getWords() as $word) {
             array_push($wordRegExps, $this->getConfig()->applyRulesToWord($word));
         }
 
         $regExps = array();
         $totalLength = 0;
 
-        // Group the regular expressions to be concatenated
-        // Each group must not exceed the total string length of REGEXP_MAX_LENGTH
-        foreach($wordRegExps as $wordRegExp)
-        {
+        // Group the regular expressions to be concatenated. Each group
+        // must not exceed the total string length of REGEXP_MAX_LENGTH
+        foreach($wordRegExps as $wordRegExp) {
+
             $wordRegExp = '(?:'.$wordRegExp.')';
-            
             $totalLength += mb_strlen($wordRegExp);
 
             $index = ceil($totalLength / self::REGEXP_MAX_LENGTH) - 1;
-            if(!isset($regExps[$index]))
-            {
+            if(!isset($regExps[$index])) {
                 $regExps[$index] = array();
             }
 
@@ -400,8 +395,7 @@ class Filter
         }
 
         // Concatenate the Word regular expressions
-        foreach($regExps as $key => $wordRegExps)
-        {
+        foreach($regExps as $key => $wordRegExps) {
             $regExps[$key] = implode('|', $wordRegExps);
         }
 
@@ -409,7 +403,7 @@ class Filter
     }
 
     /**
-     * Saves the Dictionary regular expressions to the cache.
+     * Saves the dictionary regular expressions to the cache.
      *
      * @param Dictionary $dictionary
      * @param array $regExps
@@ -418,11 +412,14 @@ class Filter
      */
     protected function saveDictionaryRegExpsToCache(Dictionary $dictionary, array $regExps)
     {
-        return $this->getCache()->set($this->getDictionaryRegExpsCacheKey($dictionary), $regExps);
+        return $this->getCache()->set(
+            $this->getDictionaryRegExpsCacheKey($dictionary),
+            $regExps
+        );
     }
 
     /**
-     * Gets the key used to read/store the Dictionary regular expressions from the cache.
+     * Gets the key used to read/store the dictionary regular expressions from the cache.
      *
      * @param Dictionary $dictionary
      *
@@ -430,11 +427,11 @@ class Filter
      */
     protected function getDictionaryRegExpsCacheKey(Dictionary $dictionary)
     {
-        return $dictionary->getId().'_regexps_'.(md5(serialize($this->getConfig())));
+        return $dictionary->getId() . '_regexps_' . (md5(serialize($this->getConfig())));
     }
 
     /**
-     * Gets the risk level of each Dictionary indexed by Dictionary ID.
+     * Gets the risk level of each dictionary indexed by dictionary ID.
      *
      * @return array
      */
@@ -442,8 +439,7 @@ class Filter
     {
         $riskLevels = array();
 
-        foreach($this->getDictionaries() as $dictionary)
-        {
+        foreach($this->getDictionaries() as $dictionary) {
             $riskLevels[$dictionary->getId()] = $dictionary->getRiskLevel();
         }
 

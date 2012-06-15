@@ -16,8 +16,8 @@ use Badword\Filter\Config\Rule\MustStartEndWord;
 use Badword\Word;
 
 /**
- * Config defines settings and regular expression generation
- * rules the Filter adheres to when executing.
+ * Defines settings and regular expression generation rules
+ * the filter adheres to when executing.
  *
  * @author Stephen Melrose <me@stephenmelrose.co.uk>
  */
@@ -44,7 +44,7 @@ class Config
     protected $whitelist = array();
 
     /**
-     * Constructs a new Config.
+     * Constructor.
      * 
      * @param array $rules The regular expression generation Rules.
      * @param array $preRules The "pre" regular expression generation Rules (executed before the standard Rules).
@@ -58,7 +58,7 @@ class Config
     }
 
     /**
-     * Adds a regular expression generation Rule.
+     * Adds a regular expression generation rule.
      * 
      * @param Rule $rule
      * 
@@ -70,13 +70,11 @@ class Config
     }
 
     /**
-     * Adds regular expression generation Rules.
+     * Adds regular expression generation rules.
      *
      * @param array $rules
      *
      * @return Config
-     *
-     * @throws \InvalidArgumentException When a rule is invalid.
      */
     public function addRules(array $rules)
     {
@@ -84,7 +82,7 @@ class Config
     }
 
     /**
-     * Gets the regular expression generation Rules.
+     * Gets the regular expression generation rules.
      *
      * @return array
      */
@@ -94,13 +92,11 @@ class Config
     }
 
     /**
-     * Sets the regular expression generation Rules.
+     * Sets the regular expression generation rules.
      *
      * @param array $rules
      *
      * @return Config
-     * 
-     * @throws \InvalidArgumentException When a rule is invalid.
      */
     public function setRules(array $rules)
     {
@@ -108,7 +104,8 @@ class Config
     }
 
     /**
-     * Adds a "pre" regular expression generation Rule (executed before the standard Rules).
+     * Adds a "pre" regular expression generation rule
+     * (executed before the standard rules).
      *
      * @param Rule $rule
      *
@@ -120,13 +117,12 @@ class Config
     }
 
     /**
-     * Adds "pre" regular expression generation Rules (executed before the standard Rules).
+     * Adds "pre" regular expression generation rules
+     * (executed before the standard rules).
      *
      * @param array $rules
      *
      * @return Config
-     *
-     * @throws \InvalidArgumentException When a rule is invalid.
      */
     public function addPreRules(array $rules)
     {
@@ -134,7 +130,8 @@ class Config
     }
 
     /**
-     * Gets the "pre" regular expression generation Rules (executed before the standard Rules).
+     * Gets the "pre" regular expression generation rules
+     * (executed before the standard rules).
      *
      * @return array
      */
@@ -144,13 +141,12 @@ class Config
     }
 
     /**
-     * Sets the "pre" regular expression generation Rules (executed before the standard Rules).
+     * Sets the "pre" regular expression generation rules
+     * (executed before the standard rules).
      *
      * @param array $rules
      *
      * @return Config
-     *
-     * @throws \InvalidArgumentException When a rule is invalid.
      */
     public function setPreRules(array $rules)
     {
@@ -158,7 +154,8 @@ class Config
     }
 
     /**
-     * Adds a "post" regular expression generation Rule (executed after the standard Rules).
+     * Adds a "post" regular expression generation rule
+     * (executed after the standard rules).
      *
      * @param Rule $rule
      *
@@ -170,13 +167,12 @@ class Config
     }
 
     /**
-     * Adds "post" regular expression generation Rules (executed after the standard Rules).
+     * Adds "post" regular expression generation rules
+     * (executed after the standard rules).
      *
      * @param array $rules
      *
      * @return Config
-     *
-     * @throws \InvalidArgumentException When a rule is invalid.
      */
     public function addPostRules(array $rules)
     {
@@ -184,7 +180,8 @@ class Config
     }
 
     /**
-     * Gets the "post" regular expression generation Rules (executed after the standard Rules).
+     * Gets the "post" regular expression generation rules
+     * (executed after the standard rules).
      *
      * @return array
      */
@@ -194,13 +191,12 @@ class Config
     }
 
     /**
-     * Sets the "post" regular expression generation Rules (executed after the standard Rules).
+     * Sets the "post" regular expression generation rules
+     * (executed after the standard rules).
      *
      * @param array $rules
      *
      * @return Config
-     *
-     * @throws \InvalidArgumentException When a rule is invalid.
      */
     public function setPostRules(array $rules)
     {
@@ -208,7 +204,7 @@ class Config
     }
 
     /**
-     * Adds a regular expression generation Rule to the specified stack.
+     * Adds a regular expression generation rule to the specified stack.
      *
      * @param Rule $rule
      * @param array &$stack
@@ -217,8 +213,7 @@ class Config
      */
     protected function addRuleToStack(Rule $rule, array &$stack)
     {
-        if(!in_array($rule, $stack))
-        {
+        if(!in_array($rule, $stack)) {
             array_push($stack, $rule);
         }
 
@@ -226,27 +221,27 @@ class Config
     }
 
     /**
-     * Adds regular expression generation Rules to the specified stack.
+     * Adds regular expression generation rules to the specified stack.
      *
      * @param array $rules
      * @param array &$stack
      *
      * @return Config
      *
-     * @throws \InvalidArgumentException When a rule is invalid.
+     * @throws \InvalidArgumentException
      */
     protected function addRulesToStack(array $rules, array &$stack)
     {
-        foreach($rules as $key => $rule)
-        {
-            if(!($rule instanceof Rule))
-            {
-                throw new \InvalidArgumentException(sprintf('Invalid rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
+        foreach($rules as $key => $rule) {
+            if(!($rule instanceof Rule)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid rule at key "%s". Expected instance of Rule.',
+                    $key
+                ));
             }
         }
 
-        foreach($rules as $rule)
-        {
+        foreach($rules as $rule) {
             $this->addRuleToStack($rule, $stack);
         }
 
@@ -254,29 +249,29 @@ class Config
     }
 
     /**
-     * Sets the regular expression generation Rules for the specified stack.
+     * Sets the regular expression generation rules for the specified stack.
      *
      * @param array $rules
      * @param array &$stack
      *
      * @return Config
      *
-     * @throws \InvalidArgumentException When a rule is invalid.
+     * @throws \InvalidArgumentException
      */
     protected function setRulesToStack(array $rules, array &$stack)
     {
-        foreach($rules as $key => $rule)
-        {
-            if(!($rule instanceof Rule))
-            {
-                throw new \InvalidArgumentException(sprintf('Invalid rule at key "%s". Expected instance of \Badword\Filter\Config\Rule.', $key));
+        foreach($rules as $key => $rule) {
+            if(!($rule instanceof Rule)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid rule at key "%s". Expected instance of Rule.',
+                    $key
+                ));
             }
         }
 
         $stack = array();
 
-        foreach($rules as $rule)
-        {
+        foreach($rules as $rule) {
             $this->addRuleToStack($rule, $stack);
         }
 
@@ -292,18 +287,17 @@ class Config
      */
     public function addWhitelistedWord($word)
     {
-        if($word instanceof Word)
-        {
+        if($word instanceof Word) {
             $word = $word->getWord();
         }
 
-        if(!(is_string($word) && mb_strlen(trim($word)) > 0))
-        {
-            throw new \InvalidArgumentException('Invalid whitelist word. Expected non-empty string or instance of \Badword\Word.');
+        if(!(is_string($word) && mb_strlen(trim($word)) > 0)) {
+            throw new \InvalidArgumentException(
+                'Invalid whitelist word. Expected non-empty string or instance of Word.'
+            );
         }
 
-        if(!in_array($word, $this->whitelist))
-        {
+        if(!in_array($word, $this->whitelist)) {
             array_push($this->whitelist, mb_strtolower(trim($word)));
         }
 
@@ -316,22 +310,24 @@ class Config
      * @param array $words
      *
      * @return Config
+     *
+     * @throws \InvalidArgumentException
      */
     public function addWhitelistedWords(array $words)
     {
         $currentWhitelist = $this->whitelist;
 
-        try
-        {
-            foreach($words as $key => $word)
-            {
+        try {
+            foreach($words as $key => $word) {
                 $this->addWhitelistedWord($word);
             }
         }
-        catch(\InvalidArgumentException $e)
-        {
+        catch(\InvalidArgumentException $e) {
             $this->whitelist = $currentWhitelist;
-            throw new \InvalidArgumentException(sprintf('Invalid whitelist word at key "%s". Expected non-empty string or instance of \Badword\Word.', $key));
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid whitelist word at key "%s". Expected non-empty string or instance of Word.',
+                $key
+            ));
         }
 
         return $this;
@@ -353,42 +349,47 @@ class Config
      * @param array $words
      *
      * @return Config
+     *
+     * @throws \InvalidArgumentException
      */
     public function setWhitelistedWords(array $words)
     {
         $currentWhitelist = $this->whitelist;
         $this->whitelist = array();
 
-        try
-        {
-            foreach($words as $key => $word)
-            {
+        try {
+            foreach($words as $key => $word) {
                 $this->addWhitelistedWord($word);
             }
         }
-        catch(\InvalidArgumentException $e)
-        {
+        catch(\InvalidArgumentException $e) {
             $this->whitelist = $currentWhitelist;
-            throw new \InvalidArgumentException(sprintf('Invalid whitelist word at key "%s". Expected non-empty string or instance of \Badword\Word.', $key));
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid whitelist word at key "%s". Expected non-empty string or instance of Word.',
+                $key
+            ));
         }
 
         return $this;
     }
 
     /**
-     * Applies the regular expression generation Rules to the Word.
+     * Applies the regular expression generation rules to the word.
      *
      * @param Word $word
      * 
-     * @return string Generated regular expression.
+     * @return string
      */
     public function applyRulesToWord(Word $word)
     {
         $regExp = addslashes($word->getWord());
-        $rules = array_merge($this->getPreRules(), $this->getRules(), $this->getPostRules());
+        $rules = array_merge(
+            $this->getPreRules(),
+            $this->getRules(),
+            $this->getPostRules()
+        );
 
-        foreach($rules as $rule)
-        {
+        foreach($rules as $rule) {
             $regExp = $rule->apply($regExp, $word);
         }
 
